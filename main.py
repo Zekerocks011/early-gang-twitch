@@ -1,9 +1,6 @@
 # imports
 import asyncio
 import traceback
-import aiofile
-import os
-from obswebsocket import obsws
 from obswebsocket import requests as obwsrequests
 from libraries.chatPlays import *
 from bots import commandBot, econBot, pollBot

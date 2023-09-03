@@ -9,8 +9,7 @@
 - [obs](https://obsproject.com/)
 - [obs-websocket](https://obsproject.com/forum/resources/obs-websocket-remote-control-obs-studio-using-websockets.466/)
 - [obs-websocket-py](https://pypi.org/project/obs-websocket-py/)
-- [pyttsx3](https://pypi.org/project/pyttsx3/)
-- [aiofile](https://pypi.org/project/aiofile/)
+- [pydirectinput](https://pypi.org/project/pydirectinput/)
 - [aiosqlite](https://pypi.org/project/aiosqlite/)
 
 ### part II - setting up the script
@@ -49,19 +48,6 @@
   - in whatever scene you want the tts to show in, create two text sources called "tts body" and "tts header"
   - style these however you want but make sure to check the "Read from file" tbox in the properties menu and give it the directories of ttsHeader.txt or ttsBody.txt respectively
   - do the same with another text source but called "snack status" for snackStatus.txt
-
-### part VI - setting up tiltify
-  - login to [tiltify developers](https://app.tiltify.com/developers)
-  - click "Create application" and enter "https://localhost/" as the redirect url
-  - once the app is created, scroll down and you should see "Client ID" and "Client Secret" at the bottom
-  - paste these into the config file
-  - go to "https://v5api.tiltify.com/oauth/authorize?client_id=CLIENT_ID_HERE&redirect_uri=https%3A%2F%2Flocalhost%2F&response_type=code&scope=public" after replacing "CLIENT_ID_HERE" with yours
-  - paste the text after "code=" in the url into the config file
-
-### part VII - setting up discord
-  - login to [discord developers](https://discord.com/developers/applications)
-  - make a new application for each discord bot you're using
-  - in the app's bot settings right under username click to make a token then paste it into the config
 
 ### questions? comments? concerns?
 ### message sna1l_boy on discord for the best chance of a timely response :)

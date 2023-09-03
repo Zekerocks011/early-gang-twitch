@@ -12,8 +12,6 @@ async def idleBot():
     # checks if idle bot is supposed to be on and if no one has chatted
     while chatPlays.idleBotPlaying:
         if timeSinceLastMessage <= (time.time() - 5 * 60):
-            botPressTime = (random.randint(1, 12) / 10)
-            botHoldTime = (random.randint(1, 100) / 10)
 
             # tell obs to show idle bot is active
             if not chatPlays.idleBotStatus:
@@ -255,6 +253,12 @@ async def controller(message):
             await forwards()
         elif "backwards" in message:
             await backwards()
+        elif "left" in message:
+            await left()
+        elif "right" in message:
+            await right()
+        elif "jump" in message:
+            await jump()
         elif "walk" in message:
             await walk()
         elif "stop" in message:
@@ -270,8 +274,7 @@ async def lookLeft():
     pydirectinput.move(xOffset = -50, yOffset = 0, duration = .5, relative = True)
 
 async def lookRight():
-   pydirectinput.move(xOffset = 50, yOffset = 0, duration = .5, relative = True)
-   pydirectinput.click()
+    pydirectinput.move(xOffset = 50, yOffset = 0, duration = .5, relative = True)
 
 async def interact():
     pydirectinput.click()
@@ -281,6 +284,15 @@ async def forwards():
 
 async def backwards():
     await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), .2)
+
+async def left():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), .2)
+
+async def right():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), .2)
+
+async def jump():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("SPACE"), .2)
 
 async def crouch():
     await chatPlays.holdKey(chatPlays.keyCodes.get("CONTROL"))
