@@ -253,6 +253,7 @@ class Bot(commands.Bot):
     async def stopstream(self, ctx: commands.Context):
         if ctx.author.name in tokens:
             ws.call(obwsrequests.StopStreaming())
+            exit()
     
     # allows mods to raid
     @commands.command()
@@ -260,7 +261,6 @@ class Bot(commands.Bot):
         if ctx.author.name in tokens:
             ctx.message.content = ctx.message.content.replace("!raid ", "")
             users = await bot.fetch_users([yourChannelName, ctx.message.content])
-            print(users)
             await users[0].start_raid(accessToken, users[1].id)
 
     # sends a message with the currently playing song
