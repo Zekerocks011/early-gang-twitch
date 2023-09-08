@@ -186,7 +186,7 @@ class Bot(commands.Bot):
                 asyncio.create_task(remod(str(message.author.id), duration))
 
         # making controller input
-        await asyncio.create_task(controller(message.content))
+        await asyncio.create_task(controller(message))
         await self.handle_commands(message)
 
     # sends list of chat plays controls

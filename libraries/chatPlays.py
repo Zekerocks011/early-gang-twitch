@@ -13,14 +13,18 @@ from obswebsocket import requests as obwsrequests
 # getting controller
 config = configparser.ConfigParser()
 config.read("files\\config.ini")
-controller = config.get("command bot", "controller")
+controller = config.get("command bot", "controller").lower()
 
-if controller == "peggle":
+if controller == "peggle" or controller == "douggle":
 	from controllers.peggleController import *
-elif controller == "stanley parable":
+elif controller == "stanley parable" or controller == "tspud":
 	from controllers.stanleyParableController import *
-elif controller == "ruby" or controller == "pokemon ruby":
+elif controller == "ruby" or controller == "pokemon ruby" or controller == "sapphire" or controller == "pokemon sapphire":
 	from controllers.pokemonRubyController import *
+elif controller == "mario party":
+	from controllers.marioPartyController import *
+elif controller == "infinite fusion" or controller == "pokemon infinite fusion":
+	from controllers.marioPartyController import *
 elif controller == "none":
 	from controllers.noController import *
 else:

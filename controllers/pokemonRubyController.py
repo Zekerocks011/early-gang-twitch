@@ -267,9 +267,7 @@ async def controller(message):
     if chatPlays.chatPlaying is True:
         global timeSinceLastMessage
         timeSinceLastMessage = time.time()
-
-        # setting up variables
-        message = message.lower()
+        message = message.content.lower()
 
         # making inputs
         if message == "a":

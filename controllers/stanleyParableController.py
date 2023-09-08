@@ -233,6 +233,7 @@ async def controller(message):
     if chatPlays.chatPlaying is True:
         global timeSinceLastMessage
         timeSinceLastMessage = time.time()
+        message = message.content.lower()
 
         # making inputs
         if "look up" in message:
