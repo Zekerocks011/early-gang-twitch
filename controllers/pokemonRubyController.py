@@ -11,8 +11,6 @@ async def idleBot():
     # checks if idle bot is supposed to be on and if no one has chatted
     while chatPlays.idleBotPlaying:
         if timeSinceLastMessage <= (time.time() - 5 * 60):
-            botPressTime = (random.randint(1, 12) / 10)
-            botHoldTime = (random.randint(1, 100) / 10)
 
             # tell obs to show idle bot is active
             if not chatPlays.idleBotStatus:
@@ -28,28 +26,26 @@ async def idleBot():
                 dice = random.randint(1, 4)
                 match dice:
                     case 1:
-                        await a(botPressTime)
+                        await a()
                     case 2:
-                        await b(botPressTime)
+                        await b()
                     case 3:
-                        await select(botPressTime)
+                        await select()
                     case 4:
-                        await start(botPressTime)
+                        await start()
 
             # 75% chance of directionals
             else:
-                dice = random.randint(1, 5)
+                dice = random.randint(1, 4)
                 match dice:
                     case 1:
-                        await up(botPressTime)
+                        await up()
                     case 2:
-                        await down(botPressTime)
+                        await down()
                     case 3:
-                        await left(botPressTime)
+                        await left()
                     case 4:
-                        await right(botPressTime)
-                    case 5:
-                        await wander(4, botHoldTime)
+                        await right()
 
         # tell obs idle bot is inactive
         else:
@@ -64,9 +60,6 @@ async def inputBot():
     # checks if conditions are right
     while chatPlays.inputBotPlaying:
         if not chatPlays.snackShot or chatPlays.snackHealed:
-            botPressTime = (random.randint(1, 12) / 10)
-            botHoldTime = (random.randint(1, 100) / 10)
-            lightPressTime = (random.randint(1, 3) / 400)
 
             # sleepy snack controls
             if chatPlays.currentSnack == "sleepy":
@@ -77,38 +70,36 @@ async def inputBot():
                 # 5% chance of no action
                 dice = random.randint(1, 100)
                 if dice < 96:
-                    dice = random.randint(1, 17)
+                    dice = random.randint(1, 16)
                     match dice:
                         case 1:
-                            await up(botPressTime)
+                            await up()
                         case 2:
-                            await down(botPressTime)
+                            await down()
                         case 3:
-                            await left(botPressTime)
+                            await left()
                         case 4:
-                            await right(botPressTime)
+                            await right()
                         case 5:
-                            await holdUp(botHoldTime)
+                            await holdUp()
                         case 6:
-                            await holdDown(botHoldTime)
+                            await holdDown()
                         case 7:
-                            await holdLeft(botHoldTime)
+                            await holdLeft()
                         case 8:
-                            await holdDown(botHoldTime)
+                            await holdDown()
                         case 9:
-                            await a(botPressTime)
+                            await a()
                         case 10:
-                            await holdA(botHoldTime)
+                            await holdA()
                         case 11:
-                            await b(botPressTime)
+                            await b()
                         case 12:
                             await holdB()
                         case 15:
-                            await select(botPressTime)
+                            await select()
                         case 16:
-                            await start(botPressTime)
-                        case 17:
-                            await wander(2, botHoldTime)
+                            await start()
 
             # chris snack controls
             elif chatPlays.currentSnack == "chris":
@@ -119,38 +110,36 @@ async def inputBot():
                 # 33% chance of no action
                 dice = random.randint(1, 3)
                 if dice != 1:
-                    dice = random.randint(1, 17)
+                    dice = random.randint(1, 16)
                     match dice:
                         case 1:
-                            await up(botPressTime)
+                            await up()
                         case 2:
-                            await down(botPressTime)
+                            await down()
                         case 3:
-                            await left(botPressTime)
+                            await left()
                         case 4:
-                            await right(botPressTime)
+                            await right()
                         case 5:
-                            await holdUp(botHoldTime)
+                            await holdUp()
                         case 6:
-                            await holdDown(botHoldTime)
+                            await holdDown()
                         case 7:
-                            await holdLeft(botHoldTime)
+                            await holdLeft()
                         case 8:
-                            await holdDown(botHoldTime)
+                            await holdDown()
                         case 9:
-                            await a(botPressTime)
+                            await a()
                         case 10:
-                            await holdA(botHoldTime)
+                            await holdA()
                         case 11:
-                            await b(botPressTime)
+                            await b()
                         case 12:
                             await holdB()
                         case 15:
-                            await select(botPressTime)
+                            await select()
                         case 16:
-                            await start(botPressTime)
-                        case 17:
-                            await wander(2, botHoldTime)
+                            await start()
 
             # burst snack controls
             elif chatPlays.currentSnack == "burst":
@@ -162,38 +151,36 @@ async def inputBot():
                 dice = random.randint(1, 10)
                 if dice != 1:
                     for i in range(5):
-                        dice = random.randint(1, 17)
+                        dice = random.randint(1, 16)
                         match dice:
                             case 1:
-                                await up(botPressTime)
+                                await up()
                             case 2:
-                                await down(botPressTime)
+                                await down()
                             case 3:
-                                await left(botPressTime)
+                                await left()
                             case 4:
-                                await right(botPressTime)
+                                await right()
                             case 5:
-                                await holdUp(botHoldTime)
+                                await holdUp()
                             case 6:
-                                await holdDown(botHoldTime)
+                                await holdDown()
                             case 7:
-                                await holdLeft(botHoldTime)
+                                await holdLeft()
                             case 8:
-                                await holdDown(botHoldTime)
+                                await holdDown()
                             case 9:
-                                await a(botPressTime)
+                                await a()
                             case 10:
-                                await holdA(botHoldTime)
+                                await holdA()
                             case 11:
-                                await b(botPressTime)
+                                await b()
                             case 12:
                                 await holdB()
                             case 15:
-                                await select(botPressTime)
+                                await select()
                             case 16:
-                                await start(botPressTime)
-                            case 17:
-                                await wander(2, botHoldTime)
+                                await start()
 
             # silly snack controls
             elif chatPlays.currentSnack == "silly":
@@ -207,23 +194,21 @@ async def inputBot():
                     dice = random.randint(1, 9)
                     match dice:
                         case 1:
-                            await up(botPressTime)
+                            await up()
                         case 2:
-                            await down(botPressTime)
+                            await down()
                         case 3:
-                            await left(botPressTime)
+                            await left()
                         case 4:
-                            await right(botPressTime)
+                            await right()
                         case 5:
-                            await holdUp(botHoldTime)
+                            await holdUp()
                         case 6:
-                            await holdDown(botHoldTime)
+                            await holdDown()
                         case 7:
-                            await holdLeft(botHoldTime)
+                            await holdLeft()
                         case 8:
-                            await holdDown(botHoldTime)
-                        case 9:
-                            await wander(2, botHoldTime)
+                            await holdDown()
 
             # cautious snack controls
             elif chatPlays.currentSnack == "cautious":
@@ -237,17 +222,17 @@ async def inputBot():
                     dice = random.randint(1, 6)
                     match dice:
                         case 1:
-                            await slightUp(lightPressTime)
+                            await slightUp()
                         case 2:
-                            await slightDown(lightPressTime)
+                            await slightDown()
                         case 3:
-                            await slightRight(lightPressTime)
+                            await slightRight()
                         case 4:
-                            await slightLeft(lightPressTime)
+                            await slightLeft()
                         case 5:
-                            await b(botPressTime)
+                            await b()
                         case 6:
-                            await mashB(botPressTime)
+                            await mashB()
 
             # sonic snack controls
             elif chatPlays.currentSnack == "sonic":
@@ -258,30 +243,20 @@ async def inputBot():
                 # 10% chance of no action
                 dice = random.randint(1, 10)
                 if dice != 1:
-                    dice = random.randint(1, 11)
+                    dice = random.randint(1, 6)
                     match dice:
                         case 1:
-                            await slightUp(lightPressTime)
+                            await slightUp()
                         case 2:
-                            await slightDown(lightPressTime)
+                            await slightDown()
                         case 3:
-                            await slightLeft(lightPressTime)
+                            await slightLeft()
                         case 4:
-                            await slightRight(lightPressTime)
+                            await slightRight()
                         case 5:
-                            await mashA(botPressTime)
+                            await mashA()
                         case 6:
-                            await mashB(botPressTime)
-                        case 7:
-                            await wander(4, botHoldTime)
-                        case 8:
-                            await upWander(botHoldTime)
-                        case 9:
-                            await downWander(botHoldTime)
-                        case 10:
-                            await leftWander(botHoldTime)
-                        case 11:
-                            await rightWander(botHoldTime)
+                            await mashB()
         else:
             await asyncio.sleep(5)
 
@@ -294,273 +269,138 @@ async def controller(message):
         timeSinceLastMessage = time.time()
 
         # setting up variables
-        pressTime = (random.randint(1, 3) / 10)
-        lightPressTime = (random.randint(1, 3) / 400)
-        holdTime = random.randint(5, 10)
         message = message.lower()
 
         # making inputs
         if message == "a":
-            await a(pressTime)
+            await a()
         elif "hold a" in message:
-            await holdA(holdTime)
+            await holdA()
         elif "mash a" in message:
-            await mashA(pressTime)
+            await mashA()
         elif message == "b":
-            await b(pressTime)
+            await b()
         elif "hold b" in message:
             await holdB()
         elif "mash b" in message:
-            await mashB(pressTime)
+            await mashB()
         elif "select" in message:
-            await select(pressTime)
+            await select()
         elif "start" in message:
-            await start(pressTime)
-        elif "up wander" in message:
-            await upWander(holdTime)
-        elif "down wander" in message:
-            await downWander(holdTime)
-        elif "left wander" in message:
-            await leftWander(holdTime)
-        elif "right wander" in message:
-            await rightWander(holdTime)
-        elif "wander" in message:
-            await wander(4, holdTime)
+            await start()
         elif "hold up" in message:
-            await holdUp(holdTime)
+            await holdUp()
         elif "hold down" in message:
-            await holdDown(holdTime)
+            await holdDown()
         elif "hold left" in message:
-            await holdLeft(holdTime)
+            await holdLeft()
         elif "hold right" in message:
-            await holdRight(holdTime)
+            await holdRight()
         elif "slup" in message:
-            await slightUp(lightPressTime)
+            await slightUp()
         elif "slown" in message:
-            await slightDown(lightPressTime)
+            await slightDown()
         elif "sleft" in message:
-            await slightLeft(lightPressTime)
+            await slightLeft()
         elif "slight" in message:
-            await slightRight(lightPressTime)
+            await slightRight()
         elif "up" in message:
-            await up(pressTime)
+            await up()
         elif "down" in message:
-            await down(pressTime)
+            await down()
         elif "left" in message:
-            await left(pressTime)
+            await left()
         elif "right" in message:
-            await right(pressTime)
+            await right()
         elif "stop" in message:
             await stop()
 
 # define controls down here
-async def a(pressTime):
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("L"), pressTime)
+async def a():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("L"), .2)
 
-async def holdA(holdTime):
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("L"), holdTime)
+async def holdA():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("L"), 5)
 
-async def mashA(pressTime):
+async def mashA():
     mashTime = 0
-    while mashTime <= 2:
-        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("L"), pressTime)
-        mashTime += pressTime + .3
+    while mashTime <= 5:
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("L"), .2)
+        mashTime += .2 + .3
         await asyncio.sleep(.3)
 
-async def b(pressTime):
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("K"), pressTime)
+async def b():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("K"), .2)
 
 async def holdB():
-    await chatPlays.holdKey(chatPlays.keyCodes.get("K"))
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("K"), 5)
 
-async def mashB(pressTime):
+async def mashB():
     mashTime = 0
-    while mashTime <= 2:
-        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("K"), pressTime)
-        mashTime += pressTime + .3
+    while mashTime <= 5:
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("K"), .2)
+        mashTime += .2 + .3
         await asyncio.sleep(.3)
 
-async def select(pressTime):
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("P"), pressTime)
+async def select():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("P"), .2)
 
-async def start(pressTime):
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("U"), pressTime)
+async def start():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("U"), .2)
 
-async def wander(times, holdTime):
-    for i in range(times):
-        dice = random.randint(1, 4)
-        match dice:
-            case 1:
-                await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), holdTime)
-            case 2:
-                await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), holdTime)
-            case 3:
-                await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), holdTime)
-            case 4:
-                await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), holdTime)
+async def holdUp():
+    await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
+    await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
+    await chatPlays.releaseKey(chatPlays.keyCodes.get("D"))
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), 5)
 
-async def upWander(holdTime):
-    for i in range(4):
-        dice = random.randint(1, 10)
-        if dice == 1 or dice == 2 or dice == 3 or dice == 4:
-            await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), holdTime)
-        else:
-            dice = random.randint(1, 2)
-            if dice == 1:
-                await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), holdTime)
-            else:
-                await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), holdTime)
+async def holdDown():
+    await chatPlays.releaseKey(chatPlays.keyCodes.get("W"))
+    await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
+    await chatPlays.releaseKey(chatPlays.keyCodes.get("D"))
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), 5)
 
-async def downWander(holdTime):
-    for i in range(4):
-        dice = random.randint(1, 10)
-        if dice == 1 or dice == 2 or dice == 3 or dice == 4:
-            await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), holdTime)
-        else:
-            dice = random.randint(1, 2)
-            if dice == 1:
-                await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), holdTime)
-            else:
-                await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), holdTime)
+async def holdLeft():
+    await chatPlays.releaseKey(chatPlays.keyCodes.get("D"))
+    await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
+    await chatPlays.releaseKey(chatPlays.keyCodes.get("W"))
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), 5)
 
-async def leftWander(holdTime):
-    for i in range(4):
-        dice = random.randint(1, 10)
-        if dice == 1 or dice == 2 or dice == 3 or dice == 4:
-            await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), holdTime)
-        else:
-            dice = random.randint(1, 2)
-            if dice == 1:
-                await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), holdTime)
-            else:
-                await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), holdTime)
+async def holdRight():
+    await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
+    await chatPlays.releaseKey(chatPlays.keyCodes.get("W"))
+    await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), 5)
 
-async def rightWander(holdTime):
-    for i in range(4):
-        dice = random.randint(1, 10)
-        if dice == 1 or dice == 2 or dice == 3 or dice == 4:
-            await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), holdTime)
-        else:
-            dice = random.randint(1, 2)
-            if dice == 1:
-                await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), holdTime)
-            else:
-                await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), holdTime)
+async def slightUp():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), .002)
 
-async def holdUp(holdTime):
-    dice = random.randint(1, 100)
-    if dice == 1:
-        for i in range(8):
-            dice = random.randint(1, 4)
-            match dice:
-                case 1:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), holdTime)
-                case 2:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), holdTime)
-                case 3:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), holdTime)
-                case 4:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), holdTime)
-    else:
-        await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
-        await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
-        await chatPlays.releaseKey(chatPlays.keyCodes.get("D"))
-        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), holdTime)
+async def slightDown():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), .002)
 
-async def holdDown(holdTime):
-    dice = random.randint(1, 100)
-    if dice == 1:
-        for i in range(8):
-            dice = random.randint(1, 4)
-            match dice:
-                case 1:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), holdTime)
-                case 2:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), holdTime)
-                case 3:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), holdTime)
-                case 4:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), holdTime)
-    else:
-        await chatPlays.releaseKey(chatPlays.keyCodes.get("W"))
-        await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
-        await chatPlays.releaseKey(chatPlays.keyCodes.get("D"))
-        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), holdTime)
+async def slightLeft():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), .002)
 
-async def holdLeft(holdTime):
-    dice = random.randint(1, 100)
-    if dice == 1:
-        for i in range(8):
-            dice = random.randint(1, 4)
-            match dice:
-                case 1:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), holdTime)
-                case 2:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), holdTime)
-                case 3:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), holdTime)
-                case 4:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), holdTime)
-    else:
-        await chatPlays.releaseKey(chatPlays.keyCodes.get("D"))
-        await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
-        await chatPlays.releaseKey(chatPlays.keyCodes.get("W"))
-        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), holdTime)
+async def slightRight():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), .002)
 
-async def holdRight(holdTime):
-    dice = random.randint(1, 100)
-    if dice == 1:
-        for i in range(8):
-            dice = random.randint(1, 4)
-            match dice:
-                case 1:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), holdTime)
-                case 2:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), holdTime)
-                case 3:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), holdTime)
-                case 4:
-                    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), holdTime)
-    else:
-        await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
-        await chatPlays.releaseKey(chatPlays.keyCodes.get("W"))
-        await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
-        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), holdTime)
+async def up():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), .2)
 
-async def slightUp(lightPressTime):
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), lightPressTime)
+async def down():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), .2)
 
-async def slightDown(lightPressTime):
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), lightPressTime)
+async def left():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), .2)
 
-async def slightLeft(lightPressTime):
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), lightPressTime)
-
-async def slightRight(lightPressTime):
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), lightPressTime)
-
-async def up(pressTime):
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), pressTime)
-
-async def down(pressTime):
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), pressTime)
-
-async def left(pressTime):
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), pressTime)
-
-async def right(pressTime):
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), pressTime)
+async def right():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), .2)
 
 async def stop():
     await chatPlays.releaseKey(chatPlays.keyCodes.get("K"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("V"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("Q"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("E"))
     await chatPlays.releaseKey(chatPlays.keyCodes.get("L"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("I"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("O"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("T"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("G"))
+    await chatPlays.releaseKey(chatPlays.keyCodes.get("U"))
+    await chatPlays.releaseKey(chatPlays.keyCodes.get("P"))
     await chatPlays.releaseKey(chatPlays.keyCodes.get("W"))
     await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
     await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
