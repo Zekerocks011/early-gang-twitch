@@ -24,7 +24,7 @@ elif controller == "ruby" or controller == "pokemon ruby" or controller == "sapp
 elif controller == "mario party":
 	from controllers.marioPartyController import *
 elif controller == "infinite fusion" or controller == "pokemon infinite fusion":
-	from controllers.marioPartyController import *
+	from controllers.pokemonInfiniteFusionController import *
 elif controller == "none":
 	from controllers.noController import *
 else:
