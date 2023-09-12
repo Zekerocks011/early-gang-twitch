@@ -23,7 +23,7 @@ async def idleBot():
             # 25% chance of non directionals
             dice = random.randint(1, 4)
             if dice == 1:
-                dice = random.randint(1, 6)
+                dice = random.randint(1, 9)
                 match dice:
                     case 1:
                         await a(True if random.randint(1, 2) == 1 else False)
@@ -37,6 +37,12 @@ async def idleBot():
                         await mashB(True if random.randint(1, 2) == 1 else False)
                     case 6:
                         await mashA(True if random.randint(1, 2) == 1 else False)
+                    case 7:
+                        await x(True if random.randint(1, 2) == 1 else False)
+                    case 8:
+                        await l(True if random.randint(1, 2) == 1 else False)
+                    case 9:
+                        await r(True if random.randint(1, 2) == 1 else False)
 
             # 75% chance of directionals
             else:
@@ -98,7 +104,7 @@ async def inputBot():
                 # 33% chance of no action
                 dice = random.randint(1, 3)
                 if dice != 1:
-                    dice = random.randint(1, 10)
+                    dice = random.randint(1, 13)
                     match dice:
                         case 1:
                             await up(True if random.randint(1, 2) == 1 else False)
@@ -120,6 +126,12 @@ async def inputBot():
                             await mashA(True if random.randint(1, 2) == 1 else False)
                         case 10:
                             await mashB(True if random.randint(1, 2) == 1 else False)
+                        case 11:
+                            await y(True if random.randint(1, 2) == 1 else False)
+                        case 12:
+                            await l(True if random.randint(1, 2) == 1 else False)
+                        case 13:
+                            await r(True if random.randint(1, 2) == 1 else False)
 
             # burst snack controls
             elif chatPlays.currentSnack == "burst":
@@ -225,6 +237,12 @@ async def controller(message):
             await b("a" <= message.author.name[0] <= "m")
         elif message.content.lower() == "x":
             await x("a" <= message.author.name[0] <= "m")
+        elif message.content.lower() == "y":
+            await x("a" <= message.author.name[0] <= "m")
+        elif message.content.lower() == "l":
+            await x("a" <= message.author.name[0] <= "m")
+        elif message.content.lower() == "r":
+            await x("a" <= message.author.name[0] <= "m")
         elif "start" in message.content.lower():
             await start("a" <= message.author.name[0] <= "m")
         elif "mash a" in message.content.lower():
@@ -277,6 +295,24 @@ async def x(aCrew):
         await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("C"), .2)
     else:
         await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("B"), .2)
+
+async def y(aCrew):
+    if aCrew:
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("H"), .2)
+    else:
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("G"), .2)
+    
+async def l(aCrew):
+    if aCrew:
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("T"), .2)
+    else:
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("E"), .2)
+
+async def r(aCrew):
+    if aCrew:
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("Y"), .2)
+    else:
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("R"), .2)
 
 async def start(aCrew):
     if aCrew:
