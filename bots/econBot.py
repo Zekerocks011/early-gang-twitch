@@ -318,7 +318,7 @@ class Bot(commands.Bot):
     # lists commands available for purchase
     @commands.command()
     async def bpshop(self, ctx: commands.Context):
-        await ctx.send("[bot] !shoot (1000), !shootsnack (800), !swapsnack (150), !healsnack (500)")
+        await ctx.send("[bot] !shoot (1000), !shootsnack (800), !swapsnack (150), !healsnack (500), !sue (???)")
 
     # times out user
     @commands.command()
@@ -631,7 +631,10 @@ class Bot(commands.Bot):
         global voters
         global verdict
 
-        if ctx.message.content == "!sue" or ctx.message.content == "!sue ":
+        ctx.message.content = ctx.message.content.replace("!sue ", "")
+        ctx.message.content = ctx.message.content.split()
+
+        if len(ctx.message.content) < 3:
             await ctx.send("please include the user and amount your command messages formatted like !sue user amount")
         else:
 
@@ -645,7 +648,7 @@ class Bot(commands.Bot):
             voters = [ctx.author.name, ctx.message.content[0]]
             verdict = [0, 0]
             await ctx.send("the trial of " + ctx.author.name + " v. " + ctx.message.content[0] + " has commenced. type \"guilty\" or \"not guilty\" to vote")
-            await asyncio.sleep(10)
+            await asyncio.sleep(30)
 
             # delivering the verdict
             if verdict[0] > verdict [1]:
