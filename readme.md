@@ -45,9 +45,7 @@
   - if you installed obs-websockets correctly there should be a "WebSockets Sever Settings (4.x) Compat" button in the dropdown
   - click it and make sure it the "Enable Websockets server" box is checked as well as the "Enable authentication" box
   - change the "Password" field to whatever password you want then update the respective line in the config file
-  - in whatever scene you want the tts to show in, create two text sources called "tts body" and "tts header"
-  - style these however you want but make sure to check the "Read from file" tbox in the properties menu and give it the directories of ttsHeader.txt or ttsBody.txt respectively
-  - do the same with another text source but called "snack status" for snackStatus.txt
+  - create two text sources called "snack status" and "raid status"
 
 ### questions? comments? concerns?
 ### message sna1l_boy on discord for the best chance of a timely response :)

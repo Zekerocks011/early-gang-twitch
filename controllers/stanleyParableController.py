@@ -35,11 +35,11 @@ async def idleBot():
                     case 4:
                         await lookRight()
                     case 5:
-                        interact()
+                        await interact()
                     case 6:
-                        crouch()
+                        await crouch()
                     case 7:
-                        uncrouch()
+                        await uncrouch()
 
             # 75% chance of directionals
             else:

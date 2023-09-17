@@ -2,9 +2,7 @@
 # the arrow keys didn't seem to work on my pc so use LEFT, RIGHT, UP, and DOWN at your own risk ig
 
 # imports
-import configparser
 import ctypes
-import asyncio
 import pynput
 import configparser
 from obswebsocket import obsws

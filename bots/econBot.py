@@ -8,9 +8,6 @@ import sys
 import traceback
 import aiohttp
 import aiosqlite
-import random
-import time
-import asyncio
 from twitchio.ext import commands
 from libraries.chatPlays import *
 from bots import commandBot
@@ -266,7 +263,7 @@ class Bot(commands.Bot):
                         if giver[2] <= int(ctx.message.content[1]):
                             await ctx.send("[bot] not enough basement pesos")
 
-                        elif str((ctx.author.name).lower()) == str((ctx.message.content[0]).lower()):
+                        elif str(ctx.author.name.lower()) == str((ctx.message.content[0]).lower()):
                             await ctx.send("[bot] nice try")
 
                         # transfer money
@@ -324,7 +321,6 @@ class Bot(commands.Bot):
     @commands.command()
     async def shoot(self, ctx: commands.Context):
         duration = random.randint(10, 60)
-        finalId = ""
         user = await commandBot.bot.fetch_users([commandBot.yourChannelName])
 
         # thread to wait to remod a mod after timing them out
@@ -342,7 +338,7 @@ class Bot(commands.Bot):
                             async with session.get("https://api.twitch.tv/helix/users") as response:
                                 rateLimit = response.headers.get("Ratelimit-Remaining")
                                 if rateLimit != "0":
-                                    await session.post("https://api.twitch.tv/helix/moderation/moderators?broadcaster_id=" + str(user[0].id )+ "&user_id=" + id)
+                                    await session.post("https://api.twitch.tv/helix/moderation/moderators?broadcaster_id=" + str(user[0].id) + "&user_id=" + id)
                                     async with session.get("https://api.twitch.tv/helix/moderation/moderators?broadcaster_id=" + str(user[0].id)) as response:
                                         modIds = []
                                         for mod in (await response.json()).get("data"):
@@ -411,7 +407,7 @@ class Bot(commands.Bot):
                                 item = item.replace("\"", "")
 
                         async with db.execute("SELECT action FROM pastTenseActions ORDER BY RANDOM() LIMIT 1") as cursor:
-                            pastTenseAction = str(await cursor.fetchone()).replace("(", "").replace(")", "").replace(",","")
+                            pastTenseAction = str(await cursor.fetchone()).replace("(", "").replace(")", "").replace(",", "")
                             if pastTenseAction[0] == "\'":
                                 pastTenseAction = pastTenseAction.replace("\'", "")
                             else:
@@ -651,44 +647,44 @@ class Bot(commands.Bot):
             await asyncio.sleep(30)
 
             # delivering the verdict
-            if verdict[0] > verdict [1]:
+            if verdict[0] > verdict[1]:
                 await ctx.send("the verdict is... GUILTY")
 
                 async with aiosqlite.connect(os.path.abspath(os.path.join(commandBot.directory, "chatData.db"))) as db:
                         
-                        # take the amount from listed person and give it to the user
-                        async with aiosqlite.connect(os.path.abspath((os.path.join(commandBot.directory, "chatData.db")))) as db:
-                            async with db.execute("SELECT * FROM economy WHERE id=?", (ctx.author.id,)) as cursor:
-                                suer = await cursor.fetchone()
+                    # take the amount from listed person and give it to the user
+                    async with aiosqlite.connect(os.path.abspath((os.path.join(commandBot.directory, "chatData.db")))) as db:
+                        async with db.execute("SELECT * FROM economy WHERE id=?", (ctx.author.id,)) as cursor:
+                            suer = await cursor.fetchone()
 
-                            async with db.execute("SELECT * FROM economy WHERE id=?", (users[0].id,)) as cursor:
-                                suee = await cursor.fetchone()
-                                if suee[2] < int(ctx.message.content[1]):
-                                    ctx.message.content[1] = suee[2]
+                        async with db.execute("SELECT * FROM economy WHERE id=?", (users[0].id,)) as cursor:
+                            suee = await cursor.fetchone()
+                            if suee[2] < int(ctx.message.content[1]):
+                                ctx.message.content[1] = suee[2]
 
-                            if str((ctx.author.name).lower()) != str((ctx.message.content[0]).lower()) and suee and suer:
-                                await db.execute("UPDATE economy SET points=? WHERE id=?", ((suee[2] - int(ctx.message.content[1])), users[0].id))
-                                await db.execute("UPDATE economy SET points=? WHERE id=?", ((suer[2] + int(ctx.message.content[1])), ctx.author.id))
-                                await db.commit()                                    
+                        if str(ctx.author.name.lower()) != str((ctx.message.content[0]).lower()) and suee and suer:
+                            await db.execute("UPDATE economy SET points=? WHERE id=?", ((suee[2] - int(ctx.message.content[1])), users[0].id))
+                            await db.execute("UPDATE economy SET points=? WHERE id=?", ((suer[2] + int(ctx.message.content[1])), ctx.author.id))
+                            await db.commit()
 
-            elif verdict[0] < verdict [1]:
+            elif verdict[0] < verdict[1]:
                 await ctx.send("the verdict is... NOT GUILTY")
                 async with aiosqlite.connect(os.path.abspath(os.path.join(commandBot.directory, "chatData.db"))) as db:
                         
-                        # take the amount from the user and give it to the listed person
-                        async with aiosqlite.connect(os.path.abspath((os.path.join(commandBot.directory, "chatData.db")))) as db:
-                            async with db.execute("SELECT * FROM economy WHERE id=?", (ctx.author.id,)) as cursor:
-                                suer = await cursor.fetchone()
-                                if suee[2] < ctx.message.content[1]:
-                                    ctx.message.content[1] == suee[2]
+                    # take the amount from the user and give it to the listed person
+                    async with aiosqlite.connect(os.path.abspath((os.path.join(commandBot.directory, "chatData.db")))) as db:
+                        async with db.execute("SELECT * FROM economy WHERE id=?", (ctx.author.id,)) as cursor:
+                            suer = await cursor.fetchone()
+                            if suer[2] < ctx.message.content[1]:
+                                ctx.message.content[1] = suer[2]
 
-                            async with db.execute("SELECT * FROM economy WHERE id=?", (users[0].id,)) as cursor:
-                                suee = await cursor.fetchone()
+                        async with db.execute("SELECT * FROM economy WHERE id=?", (users[0].id,)) as cursor:
+                            suee = await cursor.fetchone()
 
-                            if str((ctx.author.name).lower()) != str((ctx.message.content[0]).lower()) and suee and suer:
-                                await db.execute("UPDATE economy SET points=? WHERE id=?", ((suee[2] + int(ctx.message.content[1])), users[0].id))
-                                await db.execute("UPDATE economy SET points=? WHERE id=?", ((suer[2] - int(ctx.message.content[1])), ctx.author.id))
-                                await db.commit()             
+                        if str(ctx.author.name.lower()) != str((ctx.message.content[0]).lower()) and suee and suer:
+                            await db.execute("UPDATE economy SET points=? WHERE id=?", ((suee[2] + int(ctx.message.content[1])), users[0].id))
+                            await db.execute("UPDATE economy SET points=? WHERE id=?", ((suer[2] - int(ctx.message.content[1])), ctx.author.id))
+                            await db.commit()
 
             else:
                 await ctx.send("the verdict is... MISTRIAL")
@@ -703,7 +699,7 @@ class Bot(commands.Bot):
             await asyncio.sleep(10)
 
             # when channel goes live reset uptime and !first
-            if await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]) != []:
+            if await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]):
                 if not live:
                     for element in chatters:
                         element[1] = time.time()

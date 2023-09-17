@@ -3,7 +3,6 @@
 # not much documentation here because even i don't know what the fuck this object oriented programming is doing in python
 
 # imports
-from twitchio.ext import commands
 from bots.commandBot import *
 
 # setting up variables
@@ -43,9 +42,9 @@ class Bot(commands.Bot):
             if message.author.name not in voters:
 
                 # checks if message is number then increases vote count for the specified option
-                for x in range(len(pollOptions)):
-                    if message.content == str(x + 1):
-                        pollOptions[x][1] += 1
+                for option in range(len(pollOptions)):
+                    if message.content == str(option + 1):
+                        pollOptions[option][1] += 1
                         voters += [message.author.name]
 
         # telling bot to do command
@@ -92,13 +91,13 @@ class Bot(commands.Bot):
             # getting poll info
             results = ""
             total = 0
-            for x in range(len(pollOptions)):
-                total += pollOptions[x][1]
-            for x in range(len(pollOptions)):
+            for option in range(len(pollOptions)):
+                total += pollOptions[option][1]
+            for option in range(len(pollOptions)):
                 if total != 0:
-                    results += (str(x + 1) + ", " + pollOptions[x][0] + " - " + str('%.2f' % ((pollOptions[x][1] / total) * 100)) + "%, ")
+                    results += (str(option + 1) + ", " + pollOptions[option][0] + " - " + str('%.2f' % ((pollOptions[option][1] / total) * 100)) + "%, ")
                 else:
-                    results += (str(x + 1) + ", " + pollOptions[x][0] + " - " + "0%, ")
+                    results += (str(option + 1) + ", " + pollOptions[option][0] + " - " + "0%, ")
 
             # sending poll info
             await ctx.send("[bot] " + pollName + ": " + results)
@@ -114,13 +113,13 @@ class Bot(commands.Bot):
                 # getting poll results
                 results = ""
                 total = 0
-                for x in range(len(pollOptions)):
-                    total += int(pollOptions[x][1])
-                for x in range(len(pollOptions)):
+                for option in range(len(pollOptions)):
+                    total += int(pollOptions[option][1])
+                for option in range(len(pollOptions)):
                     if total != 0:
-                        results += (pollOptions[x][0] + " - " + str('%.2f' % ((pollOptions[x][1] / total) * 100)) + "%, ")
+                        results += (pollOptions[option][0] + " - " + str('%.2f' % ((pollOptions[option][1] / total) * 100)) + "%, ")
                     else:
-                        results += (pollOptions[x][0] + " - 0%, ")
+                        results += (pollOptions[option][0] + " - 0%, ")
 
                 # sending poll results
                 await ctx.send("[bot] " + "\"" + pollName + "\"" + " results: " + results)
@@ -135,8 +134,8 @@ class Bot(commands.Bot):
 
             # getting poll results
             results = ""
-            for x in range(len(pollOptions)):
-                results += ("type \"" + str(x+1) + "\" to vote \"" + pollOptions[x][0] + "\", ")
+            for option in range(len(pollOptions)):
+                results += ("type \"" + str(option + 1) + "\" to vote \"" + pollOptions[option][0] + "\", ")
 
             # sending poll results
             await ctx.send("[bot] " + results)
@@ -163,13 +162,13 @@ class Bot(commands.Bot):
                 runningPoll = False
                 results = ""
                 total = 0
-                for i in range(len(pollOptions)):
-                    total += pollOptions[i][1]
-                for i in range(len(pollOptions)):
+                for option in range(len(pollOptions)):
+                    total += pollOptions[option][1]
+                for option in range(len(pollOptions)):
                     if total != 0:
-                        results += (pollOptions[i][0] + " - " + str('%.2f' % ((pollOptions[i][1]/total) * 100)) + "%, ")
+                        results += (pollOptions[option][0] + " - " + str('%.2f' % ((pollOptions[option][1]/total) * 100)) + "%, ")
                     else:
-                        results += (pollOptions[i][0] + " - 0%, ")
+                        results += (pollOptions[option][0] + " - 0%, ")
 
                 # sending poll results
                 await ctx.send("[bot] " + "\"" + pollName + "\"" + " results: " + results)

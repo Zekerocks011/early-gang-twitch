@@ -208,7 +208,7 @@ async def controller(message):
             await cheat()
 
 async def up():
-     pyautogui.moveTo(pyautogui.position().x, pyautogui.position().y - 50, duration = .5)
+    pyautogui.moveTo(pyautogui.position().x, pyautogui.position().y - 50, duration = .5)
 
 async def down():
     pyautogui.moveTo(pyautogui.position().x, (pyautogui.position().y + 50), duration = .5)
@@ -225,4 +225,4 @@ async def shoot():
     pyautogui.mouseUp()
 
 async def cheat():
-    chatPlays.holdAndReleaseKey("P", .2)
+    await chatPlays.holdAndReleaseKey("P", .2)

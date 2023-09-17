@@ -1,7 +1,5 @@
 # imports
-import asyncio
 import traceback
-from obswebsocket import requests as obwsrequests
 from libraries.chatPlays import *
 from bots import commandBot, econBot, pollBot
 
@@ -13,7 +11,7 @@ async def main():
     await updateSnatus()
 
     # so you don't have to restart stream
-    if await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]) != []:
+    if await commandBot.bot.fetch_streams(user_logins=[commandBot.yourChannelName]):
         await startChatPlays()
         await startAutoSave()
         await startInputBot()
@@ -36,7 +34,7 @@ async def main():
                 await stopIdleBot()
 
             # end stream
-            if await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]) != []:
+            if await commandBot.bot.fetch_streams(user_logins=[commandBot.yourChannelName]):
 
                 # start raid
                 users = await commandBot.bot.fetch_users([commandBot.yourChannelName, commandBot.streamerChannelName])
@@ -46,7 +44,7 @@ async def main():
                 commandBot.ws.call(obwsrequests.SetSceneItemProperties(item = "raid status", visible = True))
 
                 # update timer
-                clock =  [1, 30]
+                clock = [1, 30]
                 while clock != [0, 0]:
                     if clock[1] < 10:
                         ws.call(obwsrequests.SetTextGDIPlusProperties(source = "raid status", text = ("RAID INCOMING\n" + str(clock[0]) + ":0" + str(clock[1]))))
@@ -64,12 +62,11 @@ async def main():
                 commandBot.ws.call(obwsrequests.StopStreaming())
                 commandBot.ws.call(obwsrequests.SetSceneItemProperties(item = "raid status", visible = False))
 
-
         # if streamer goes offline
         elif await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]) == [] and await commandBot.bot.fetch_streams(user_logins = [commandBot.streamerChannelName]) == []:
 
             # start stream
-            if await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]) == []:
+            if not await commandBot.bot.fetch_streams(user_logins=[commandBot.yourChannelName]):
                 commandBot.ws.call(obwsrequests.StartStreaming())
             if not chatPlaying:
                 await startChatPlays()

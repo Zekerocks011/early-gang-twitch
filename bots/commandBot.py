@@ -10,10 +10,7 @@ import traceback
 from twitchio.ext import commands
 import base64
 import requests
-import asyncio
 import os
-from obswebsocket import obsws
-from obswebsocket import requests as obwsrequests
 from libraries.chatPlays import *
 
 # setting directory if file is ran correctly
@@ -67,7 +64,7 @@ websocketPassword = config.get("obs", "websocket server password")
 ws = obsws("localhost", 4444, websocketPassword)
 whiteListers = ["dougdoug", "parkzer", "gwrbull", "sna1l_boy", "jaytsoul", "purpledalek", "ramcicle", "fratriarch"]
 chatters = []
-blockedTerms = ["deez nuts" , "deez nuts gottem", "D:\\ eez nuts"]
+blockedTerms = ["deez nuts", "deez nuts gottem", "D:\\ eez nuts"]
 
 # extracting tokens
 tokens = []
@@ -246,7 +243,7 @@ class Bot(commands.Bot):
     @commands.command()
     async def startstream(self, ctx: commands.Context):
         if ctx.author.name in tokens:
-             ws.call(obwsrequests.StartStreaming())
+            ws.call(obwsrequests.StartStreaming())
     
     # allows mods to stop stream
     @commands.command()
