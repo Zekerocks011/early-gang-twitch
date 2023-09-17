@@ -49,9 +49,9 @@ async def main():
                 clock =  [1, 30]
                 while clock != [0, 0]:
                     if clock[1] < 10:
-                        ws.call(obwsrequests.SetTextGDIPlusProperties(source = "raid indicator", text = ("RAID INCOMING\n" + str(clock[0]) + ":0" + str(clock[1]))))
+                        ws.call(obwsrequests.SetTextGDIPlusProperties(source = "raid status", text = ("RAID INCOMING\n" + str(clock[0]) + ":0" + str(clock[1]))))
                     else:
-                        ws.call(obwsrequests.SetTextGDIPlusProperties(source = "raid indicator", text = ("RAID INCOMING\n" + str(clock[0]) + ":" + str(clock[1]))))
+                        ws.call(obwsrequests.SetTextGDIPlusProperties(source = "raid status", text = ("RAID INCOMING\n" + str(clock[0]) + ":" + str(clock[1]))))
 
                     if clock[1] == 0:
                         clock[1] = 59
