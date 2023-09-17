@@ -630,13 +630,9 @@ class Bot(commands.Bot):
         ctx.message.content = ctx.message.content.replace("!sue ", "")
         ctx.message.content = ctx.message.content.split()
 
-        if len(ctx.message.content) < 3:
+        if len(ctx.message.content) < 2:
             await ctx.send("please include the user and amount your command messages formatted like !sue user amount")
         else:
-
-            # extracting info
-            ctx.message.content = ctx.message.content.replace("!sue ", "")
-            ctx.message.content = ctx.message.content.split()
             users = await commandBot.bot.fetch_users([ctx.message.content[0]])
 
             # setting up trial
