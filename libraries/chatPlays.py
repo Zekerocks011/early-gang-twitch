@@ -70,25 +70,6 @@ async def holdAndReleaseKey(key, delay):
 	await asyncio.sleep(delay)
 	await releaseKey(key)
 
-# presses the autosave key every ten minutes
-async def autoSave():
-	while autoSaving:
-		await holdKey(keyCodes.get("SHIFT"))
-		await holdAndReleaseKey(keyCodes.get("F1"), 1)
-		await releaseKey(keyCodes.get("SHIFT"))
-		await asyncio.sleep(600)
-
-# starts autosaving
-async def startAutoSave():
-	global autoSaving
-	autoSaving = True
-	asyncio.create_task(autoSave())
-
-# stops autosaving
-async def stopAutoSave():
-	global autoSaving
-	autoSaving = False
-
 # starts the input bot
 async def startInputBot():
 	global inputBotPlaying

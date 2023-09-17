@@ -13,7 +13,6 @@ async def main():
     # so you don't have to restart stream
     if await commandBot.bot.fetch_streams(user_logins=[commandBot.yourChannelName]):
         await startChatPlays()
-        await startAutoSave()
         await startInputBot()
         await startIdleBot()
 
@@ -26,8 +25,6 @@ async def main():
             # shut down everything
             if chatPlaying:
                 await stopChatPlays()
-            if autoSaving:
-                await stopAutoSave()
             if inputBotPlaying:
                 await stopInputBot()
             if idleBotPlaying:
@@ -70,8 +67,6 @@ async def main():
                 commandBot.ws.call(obwsrequests.StartStreaming())
             if not chatPlaying:
                 await startChatPlays()
-            if not autoSaving:
-                await startAutoSave()
             if not inputBotPlaying:
                 await startInputBot()
             if not idleBotPlaying:
