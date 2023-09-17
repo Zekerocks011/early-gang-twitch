@@ -58,10 +58,9 @@ yourChannelName = config.get("twitch", "your channel name")
 spotifyClientID = config.get("spotify", "client id")
 spotifyClientSecret = config.get("spotify", "client secret")
 spotifyRefreshToken = config.get("spotify", "spotify refresh token")
-websocketPassword = config.get("obs", "websocket server password")
 
 # setting up variables
-ws = obsws("localhost", 4444, websocketPassword)
+ws = obsws("localhost", 4444, config.get("obs", "websocket server password"))
 whiteListers = ["dougdoug", "parkzer", "gwrbull", "sna1l_boy", "jaytsoul", "purpledalek", "ramcicle", "fratriarch"]
 chatters = []
 blockedTerms = ["deez nuts", "deez nuts gottem", "D:\\ eez nuts"]

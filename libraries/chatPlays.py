@@ -27,11 +27,10 @@ elif controller == "none":
 	from controllers.noController import *
 else:
 	print("\033[1K:\033[31m\rFUCK THAT'S NOT A CONTROLLER AAAAAAAAAAAAAAAAAAAAAAA\033[0m")
-	print("\033[1K:\033[31m\rvalid controllers\npeggle\ndouggle\nstanley parable\ntspud\nruby\npokemon ruby\nsapphire\npokemon sapphire\nmario party\ninfinite fusion\npokemon infinite fusion\nnone\033[0m")
+	print("\033[1K:\033[31m\rvalid controllers\npeggle / douggle\nstanley parable / tspud\nruby / pokemon ruby / sapphire / pokemon sapphire\nmario party\ninfinite fusion / pokemon infinite fusion\nnone\033[0m")
 
 # connecting to obs
-websocketPassword = config.get("obs", "websocket server password")
-ws = obsws("localhost", 4444, websocketPassword)
+ws = obsws("localhost", 4444, config.get("obs", "websocket server password"))
 ws.connect()
 
 # setting up variables
