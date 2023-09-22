@@ -1,3 +1,4 @@
+import asyncio
 import traceback; from libraries.chatPlays import *; from bots import commandBot, econBot, pollBot
 
 # main code loop
@@ -12,6 +13,9 @@ async def main():
         await startChatPlays()
         await startInputBot()
         await startIdleBot()
+        commandBot.ws.call(obwsrequests.SetSceneItemProperties(item = "hello world", visible = True))
+        await asyncio.sleep(5)
+        commandBot.ws.call(obwsrequests.SetSceneItemProperties(item = "hello world", visible = False))
 
     # infinite loop to check stream statuses
     while True:
