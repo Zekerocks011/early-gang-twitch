@@ -2,16 +2,7 @@
 # don't fuck with this too much unless you're familiar with twitchio and how it works
 # not much documentation here because even i don't know what the fuck this object oriented programming is doing in python
 
-# imports
-import sys
-from urllib.parse import urlencode
-import aiohttp
-import traceback
-from twitchio.ext import commands
-import base64
-import requests
-import os
-from libraries.chatPlays import *
+import aiohttp, time, traceback, random, base64, requests, os, sys; from urllib.parse import urlencode; from twitchio.ext import commands; from libraries.chatPlays import *
 
 # setting directory if file is ran correctly
 directory = ""
@@ -115,11 +106,11 @@ class Bot(commands.Bot):
         if isinstance(error, commands.CommandNotFound):
             pass
         else:
-            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+            traceback.print_exception(type(error), error, error.__traceback__, file= sys.stderr)
 
     # when someone sends a message in chat
     async def event_message(self, message):
-        global chatters
+        global chatters, chatPlays
 
         # don't take bot messages as real messages
         if message.echo:
@@ -181,8 +172,15 @@ class Bot(commands.Bot):
             if str(message.author.id) in modIds:
                 asyncio.create_task(remod(str(message.author.id), duration))
 
-        # making controller input
-        await asyncio.create_task(controller(message))
+        config = configparser.ConfigParser()
+        config.read(os.path.abspath((os.path.join(directory, "config.ini"))))
+        controlNames = {"peggle": "controllers.peggleController", "douggle": "controllers.peggleController", "stanley parable": "controllers.stanleyParableController", "tspud": "controllers.stanleyParableController", "ruby": "controllers.pokemonRubyController", "pokemonr ruby": "controllers.pokemonRubyController", "sapphire": "controllers.pokemonRubyController", "pokemon sapphire": "controllers.pokemonRubyController", "mario party": "controllers.marioPartyController", "infinite fusion": "controllers.pokemonInfiniteFusionController", "pokemon infinite fusion": "controllers.pokemonInfiniteFusionController", "none": "controllers.noController"}
+        controls = config.get("command bot", "controller").lower()
+
+        # check if it's a valid controller
+        if controls in controlNames:
+            module = importlib.import_module(controlNames[controls])
+            await asyncio.create_task(module.controller(message))
         await self.handle_commands(message)
 
     # sends list of chat plays controls

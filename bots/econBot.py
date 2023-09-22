@@ -3,22 +3,11 @@
 # also you gotta know how to use sqlite3 so good luck ;)
 # not much documentation here because even i don't know what the fuck this object oriented programming shit is doing in python
 
-# imports
-import sys
-import traceback
-import aiohttp
-import aiosqlite
-from twitchio.ext import commands
-from libraries.chatPlays import *
-from bots import commandBot
-from libraries import chatPlays
-import os
+import sys, traceback, aiohttp, aiosqlite, time, os, random; from twitchio.ext import commands; from libraries.chatPlays import *; from bots import commandBot; from libraries import chatPlays
 
 # setting up variables
 chatters = []
 live = False
-firstRedeemed = True
-activeCodes = []
 trialOngoing = False
 voters = []
 verdict = []
@@ -38,9 +27,7 @@ class Bot(commands.Bot):
 
     # does whenever a message is sent
     async def event_message(self, message):
-        global trialOngoing
-        global verdict
-        global voters
+        global trialOngoing, verdict, voters
 
         # don't take bot responses as real messages
         if message.echo:
@@ -615,7 +602,7 @@ class Bot(commands.Bot):
                     await db.execute("UPDATE economy SET points=? WHERE id=?", ((result[2] - 150), ctx.author.id))
                     await db.commit()
 
-                commandBot.chatPlays.currentSnack = snacks[random.randint(0, len(snacks) - 1)]
+                chatPlays.currentSnack = snacks[random.randint(0, len(snacks) - 1)]
                 await ctx.send("[bot] " + chatPlays.currentSnack + " snack was swapped in")
                 if not chatPlays.idleBotStatus:
                     await updateSnatus()
@@ -623,9 +610,7 @@ class Bot(commands.Bot):
     # creates a poll and lets chatters vote on who's guilty
     @commands.command()
     async def sue(self, ctx: commands.Context):
-        global trialOngoing
-        global voters
-        global verdict
+        global trialOngoing, voters, verdict
 
         ctx.message.content = ctx.message.content.replace("!sue ", "")
         ctx.message.content = ctx.message.content.split()
@@ -687,9 +672,7 @@ class Bot(commands.Bot):
 
     # as soon as bot is logged in constantly check the array and update watch time and points
     async def updateWatchTime(self):
-        global chatters
-        global live
-        global firstRedeemed
+        global chatters, live
 
         while True:
             await asyncio.sleep(10)
@@ -701,7 +684,6 @@ class Bot(commands.Bot):
                         element[1] = time.time()
                         element[2] = time.time()
                     live = True
-                    firstRedeemed = False
 
                 # update database for all users in chat
                 for chatter in chatters:

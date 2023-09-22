@@ -1,7 +1,4 @@
-# imports
-import traceback
-from libraries.chatPlays import *
-from bots import commandBot, econBot, pollBot
+import traceback; from libraries.chatPlays import *; from bots import commandBot, econBot, pollBot
 
 # main code loop
 async def main():
@@ -11,7 +8,7 @@ async def main():
     await updateSnatus()
 
     # so you don't have to restart stream
-    if await commandBot.bot.fetch_streams(user_logins=[commandBot.yourChannelName]):
+    if await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]):
         await startChatPlays()
         await startInputBot()
         await startIdleBot()
@@ -31,7 +28,7 @@ async def main():
                 await stopIdleBot()
 
             # end stream
-            if await commandBot.bot.fetch_streams(user_logins=[commandBot.yourChannelName]):
+            if await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]):
 
                 # start raid
                 users = await commandBot.bot.fetch_users([commandBot.yourChannelName, commandBot.streamerChannelName])

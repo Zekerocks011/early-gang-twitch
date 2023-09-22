@@ -1,9 +1,4 @@
-# imports
-import pyautogui
-import random
-import time
-import asyncio
-from libraries import chatPlays
+import pyautogui, random, time, asyncio; from libraries import chatPlays
 timeSinceLastMessage = time.time()
 
 # makes inputs when no one has typed in chat for a while
@@ -12,8 +7,8 @@ async def idleBot():
     # checks if idle bot is supposed to be on and if no one has chatted
     while chatPlays.idleBotPlaying:
         global timeSinceLastMessage
-        
-        if timeSinceLastMessage <= (time.time() - 5 * 60):
+
+        if timeSinceLastMessage <= (time.time() - 5 * 60) and not chatPlays.killSwitch:
 
             # tell obs to show idle bot is active
             if not chatPlays.idleBotStatus:
@@ -52,7 +47,7 @@ async def inputBot():
 
     # checks if conditions are right
     while chatPlays.inputBotPlaying:
-        if not chatPlays.snackShot or chatPlays.snackHealed:
+        if (not chatPlays.snackShot or chatPlays.snackHealed) and not chatPlays.killSwitch:
 
             # sleepy snack controls
             if chatPlays.currentSnack == "sleepy":
@@ -188,7 +183,7 @@ async def inputBot():
 async def controller(message):
 
     # makes sure chat is playing
-    if chatPlays.chatPlaying is True:
+    if chatPlays.chatPlaying is True and not chatPlays.killSwitch:
         global timeSinceLastMessage
         timeSinceLastMessage = time.time()
         message = message.content.lower()

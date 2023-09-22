@@ -2,15 +2,16 @@
 
 ### part I - shit you need to install
 - [python](https://www.python.org/downloads/)
+- [obs](https://obsproject.com/)
+- [obs-websocket](https://obsproject.com/forum/resources/obs-websocket-remote-control-obs-studio-using-websockets.466/)
 - [requests](https://pypi.org/project/requests/)
 - [PyAutoGUI](https://pypi.org/project/PyAutoGUI/)
 - [pynput](https://pypi.org/project/pynput/)
 - [twitchio](https://pypi.org/project/twitchio/)
-- [obs](https://obsproject.com/)
-- [obs-websocket](https://obsproject.com/forum/resources/obs-websocket-remote-control-obs-studio-using-websockets.466/)
 - [obs-websocket-py](https://pypi.org/project/obs-websocket-py/)
 - [pydirectinput](https://pypi.org/project/pydirectinput/)
 - [aiosqlite](https://pypi.org/project/aiosqlite/)
+- [keyboard](https://pypi.org/project/keyboard/)
 
 ### part II - setting up the script
 - download the .zip

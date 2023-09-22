@@ -2,7 +2,6 @@
 # don't fuck with this too much unless you're familiar with twitchio and how it works
 # not much documentation here because even i don't know what the fuck this object oriented programming is doing in python
 
-# imports
 from bots.commandBot import *
 
 # setting up variables
@@ -22,14 +21,11 @@ class Bot(commands.Bot):
         if isinstance(error, commands.CommandNotFound):
             pass
         else:
-            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+            traceback.print_exception(type(error), error, error.__traceback__, file= sys.stderr)
 
     # does whenever a message is sent
     async def event_message(self, message):
-        global pollOptions
-        global runningPoll
-        global voters
-        global pollName
+        global pollOptions, runningPoll, voters, pollName
 
         # don't take bot responses as real messages
         if message.echo:
@@ -53,10 +49,7 @@ class Bot(commands.Bot):
     # allows a whitelisted user to start a pole
     @commands.command()
     async def startpoll(self, ctx):
-        global pollOptions
-        global voters
-        global pollName
-        global runningPoll
+        global pollOptions, voters, pollName, runningPoll
 
         # check if user can start poll and if no other polls running
         if ctx.author.name in tokens:
@@ -81,9 +74,7 @@ class Bot(commands.Bot):
     # tells about current or most recent past poll
     @commands.command()
     async def poll(self, ctx):
-        global pollOptions
-        global runningPoll
-        global pollName
+        global pollOptions, runningPoll, pollName
 
         # if ongoing poll
         if runningPoll:
@@ -147,10 +138,7 @@ class Bot(commands.Bot):
     # allows a whitelisted user to stop the poll
     @commands.command()
     async def endpoll(self, ctx):
-        global runningPoll
-        global pollOptions
-        global voters
-        global pollName
+        global runningPoll, pollOptions, voters, pollName
 
         # checks if the user is allowed to do this and if there is even a poll running
         if ctx.author.name in tokens:

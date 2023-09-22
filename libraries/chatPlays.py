@@ -1,33 +1,62 @@
 # functions for letting chat press keys based on their messages
 # the arrow keys didn't seem to work on my pc so use LEFT, RIGHT, UP, and DOWN at your own risk ig
 
-# imports
-import ctypes
-import pynput
-import configparser
-from obswebsocket import obsws
-from obswebsocket import requests as obwsrequests
+import ctypes, pynput, configparser, asyncio, keyboard, importlib; from obswebsocket import obsws; from obswebsocket import requests as obwsrequests
 
-# getting controller
+# setting up controller
 config = configparser.ConfigParser()
 config.read("files\\config.ini")
-controller = config.get("command bot", "controller").lower()
+controllerNames = {"peggle": "controllers.peggleController", "douggle": "controllers.peggleController", "stanley parable": "controllers.stanleyParableController", "tspud": "controllers.stanleyParableController", "ruby": "controllers.pokemonRubyController", "pokemon ruby": "controllers.pokemonRubyController", "sapphire": "controllers.pokemonRubyController", "pokemon sapphire": "controllers.pokemonRubyController", "mario party": "controllers.marioPartyController", "infinite fusion": "controllers.pokemonInfiniteFusionController", "pokemon infinite fusion": "controllers.pokemonInfiniteFusionController", "none": "controllers.noController"}
+controller = None
+inputBotTask = None
+idleBotTask = None
+killSwitch = False
+module = None
 
-if controller == "peggle" or controller == "douggle":
-	from controllers.peggleController import *
-elif controller == "stanley parable" or controller == "tspud":
-	from controllers.stanleyParableController import *
-elif controller == "ruby" or controller == "pokemon ruby" or controller == "sapphire" or controller == "pokemon sapphire":
-	from controllers.pokemonRubyController import *
-elif controller == "mario party":
-	from controllers.marioPartyController import *
-elif controller == "infinite fusion" or controller == "pokemon infinite fusion":
-	from controllers.pokemonInfiniteFusionController import *
-elif controller == "none":
-	from controllers.noController import *
-else:
-	print("\033[1K:\033[31m\rFUCK THAT'S NOT A CONTROLLER AAAAAAAAAAAAAAAAAAAAAAA\033[0m")
-	print("\033[1K:\033[31m\rvalid controllers\npeggle / douggle\nstanley parable / tspud\nruby / pokemon ruby / sapphire / pokemon sapphire\nmario party\ninfinite fusion / pokemon infinite fusion\nnone\033[0m")
+# updates controller if config is changed
+async def controllerCheck():
+	global controller, killSwitch, inputBotTask, idleBotTask, module
+
+	# constantly check
+	while True:
+
+		# grab info from config
+		config.read("files\\config.ini")
+		newController = config.get("command bot", "controller").lower()
+
+		# check to toggle kill switch
+		if keyboard.is_pressed(config.get("command bot", "controls toggle key").lower()):
+			killSwitch = not killSwitch
+
+		# check if it's a valid controller
+		if newController in controllerNames:
+
+			# if the controllers are different then switch
+			if controller != newController:
+				module = importlib.import_module(controllerNames[newController])
+
+				# switch idle bot controls
+				if idleBotPlaying:
+					if idleBotTask:
+						idleBotTask.cancel()
+					idleBotTask = asyncio.create_task(module.idleBot())
+
+				# switch input bot controls
+				if inputBotPlaying:
+					if inputBotTask:
+						inputBotTask.cancel()
+					inputBotTask = asyncio.create_task(module.inputBot())
+
+				controller = newController
+
+		# error handling
+		else:
+			print("\033[1K:\033[31m\rFUCK THAT'S NOT A CONTROLLER AAAAAAAAAAAAAAAAAAAAAAA\nvalid controllers:\033[0m")
+			for controllerName in controllerNames:
+				print("\033[1K:\033[31m\r" + controllerName + "\033[0m")
+
+		# waiting so asyncio doesn't melt down
+		await asyncio.sleep(.1)
 
 # connecting to obs
 ws = obsws("localhost", 4444, config.get("obs", "websocket server password"))
@@ -37,7 +66,6 @@ ws.connect()
 chatPlaying = False
 inputBotPlaying = False
 idleBotPlaying = False
-autoSaving = False
 snackShot = False
 snackHealed = False
 idleBotStatus = False
@@ -71,9 +99,9 @@ async def holdAndReleaseKey(key, delay):
 
 # starts the input bot
 async def startInputBot():
-	global inputBotPlaying
+	global inputBotPlaying, inputBotTask, module
 	inputBotPlaying = True
-	asyncio.create_task(inputBot())
+	inputBotTask = asyncio.create_task(module.inputBot())
 
 # stops the input bot
 async def stopInputBot():
@@ -82,9 +110,9 @@ async def stopInputBot():
 
 # starts idle bot
 async def startIdleBot():
-	global idleBotPlaying
+	global idleBotPlaying, idleBotTask, module
 	idleBotPlaying = True
-	asyncio.create_task(idleBot())
+	idleBotTask = asyncio.create_task(module.idleBot())
 
 # stops the idle bot
 async def stopIdleBot():
@@ -109,3 +137,5 @@ async def updateSnatus():
 		ws.call(obwsrequests.SetTextGDIPlusProperties(source = "snack status", text = (currentSnack + " snack is dead")))
 	else:
 		ws.call(obwsrequests.SetTextGDIPlusProperties(source = "snack status", text = (currentSnack + " snack is alive")))
+
+asyncio.gather(controllerCheck())
