@@ -19,12 +19,20 @@ async def idleBot():
             # 25% chance of non directionals
             dice = random.randint(1, 4)
             if dice == 1:
-                dice = random.randint(1, 2)
+                dice = random.randint(1, 6)
                 match dice:
                     case 1:
                         await a()
                     case 2:
                         await b()
+                    case 3:
+                        await holdA()
+                    case 4:
+                        await holdB()
+                    case 5:
+                        await mashB()
+                    case 6:
+                        await mashA()
 
             # 75% chance of directionals
             else:
@@ -90,7 +98,7 @@ async def inputBot():
                 # 33% chance of no action
                 dice = random.randint(1, 3)
                 if dice != 1:
-                    dice = random.randint(1, 10)
+                    dice = random.randint(1, 14)
                     match dice:
                         case 1:
                             await up()
@@ -112,6 +120,14 @@ async def inputBot():
                             await a()
                         case 10:
                             await b()
+                        case 11:
+                            await holdA()
+                        case 12:
+                            await holdB()
+                        case 13:
+                            await mashB()
+                        case 14:
+                            await mashA()
 
             # burst snack controls
             elif chatPlays.currentSnack == "burst":
@@ -183,7 +199,7 @@ async def inputBot():
                 # 20% chance of no action
                 dice = random.randint(1, 5)
                 if dice != 1:
-                    dice = random.randint(1, 5)
+                    dice = random.randint(1, 6)
                     match dice:
                         case 1:
                             await down()
@@ -195,6 +211,8 @@ async def inputBot():
                             await right()
                         case 5:
                             await b()
+                        case 6:
+                            await mashB()
 
             # sonic snack controls
             elif chatPlays.currentSnack == "sonic":
@@ -205,7 +223,7 @@ async def inputBot():
                 # 10% chance of no action
                 dice = random.randint(1, 10)
                 if dice != 1:
-                    dice = random.randint(1, 4)
+                    dice = random.randint(1, 8)
                     match dice:
                         case 1:
                             await holdDown()
@@ -215,6 +233,14 @@ async def inputBot():
                             await holdRight()
                         case 4:
                             await holdUp()
+                        case 5:
+                           await mashB()
+                        case 6:
+                            await mashA()
+                        case 7:
+                            await holdB()
+                        case 8:
+                            await holdA()
 
         else:
             await asyncio.sleep(5)
@@ -233,6 +259,14 @@ async def controller(message):
             await a()
         elif message == "b":
             await b()
+        elif "mash a" in message:
+            await mashA()
+        elif "mash b" in message:
+            await mashB()
+        elif "hold a" in message:
+            await holdA()
+        elif "hold b" in message:
+            await holdB()
         elif "hold up" in message:
             await holdUp()
         elif "hold down" in message:
@@ -256,8 +290,28 @@ async def controller(message):
 async def a():
     await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("C"), .2)
 
+async def holdA():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("C"), 5)
+
+async def mashA():
+    mashTime = 0
+    while mashTime <= 5:
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("C"), .2)
+        mashTime += .2 + .3
+        await asyncio.sleep(.3)
+
 async def b():
     await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("X"), .2)
+
+async def holdB():
+    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("X"), 5)
+
+async def mashB():
+    mashTime = 0
+    while mashTime <= 5:
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("X"), .2)
+        mashTime += .2 + .3
+        await asyncio.sleep(.3)
 
 async def holdUp():
     await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
