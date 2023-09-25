@@ -267,6 +267,14 @@ async def controller(message):
             await holdA()
         elif "hold b" in message:
             await holdB()
+        elif "roast a" in message:
+            await roastA()
+        elif "roast b" in message:
+            await roastB()
+        elif "boil a" in message:
+            await boilA()
+        elif "boil b" in message:
+            await boilB()
         elif "hold up" in message:
             await holdUp()
         elif "hold down" in message:
@@ -356,3 +364,31 @@ async def stop():
     await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
     await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
     await chatPlays.releaseKey(chatPlays.keyCodes.get("D"))
+
+async def roastA():
+    roastTime = 0
+    while roastTime <= 5:
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("C"), .2)
+        roastTime += .2 + 1
+        await asyncio.sleep(1)
+
+async def boilA():
+    boilTime = 0
+    while boilTime <= 5:
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("C"), .2)
+        boilTime += .2 + .5
+        await asyncio.sleep(.5)
+
+async def roastB():
+    roastTime = 0
+    while roastTime <= 5:
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("X"), .2)
+        roastTime += .2 + 1
+        await asyncio.sleep(1)
+
+async def boilB():
+    boilTime = 0
+    while boilTime <= 5:
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("X"), .2)
+        boilTime += .2 + .5
+        await asyncio.sleep(.5)
