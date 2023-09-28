@@ -2,10 +2,14 @@
 # the arrow keys didn't seem to work on my pc so use LEFT, RIGHT, UP, and DOWN at your own risk ig
 
 import ctypes, pynput, configparser, asyncio, keyboard, importlib; from obswebsocket import obsws; from obswebsocket import requests as obwsrequests
-
-# setting up controller
 config = configparser.ConfigParser()
 config.read("files\\config.ini")
+
+# connecting to obs
+ws = obsws("localhost", 4444, config.get("obs", "websocket server password"))
+ws.connect()
+
+# setting up controller
 controllerNames = {"peggle": "controllers.peggleController", "douggle": "controllers.peggleController", "stanley parable": "controllers.stanleyParableController", "tspud": "controllers.stanleyParableController", "ruby": "controllers.pokemonRubyController", "pokemon ruby": "controllers.pokemonRubyController", "sapphire": "controllers.pokemonRubyController", "pokemon sapphire": "controllers.pokemonRubyController", "mario party": "controllers.marioPartyController", "infinite fusion": "controllers.pokemonInfiniteFusionController", "pokemon infinite fusion": "controllers.pokemonInfiniteFusionController", "none": "controllers.noController"}
 controller = None
 inputBotTask = None
@@ -27,6 +31,10 @@ async def controllerCheck():
 		# check to toggle kill switch
 		if keyboard.is_pressed(config.get("command bot", "controls toggle key").lower()):
 			killSwitch = not killSwitch
+			if killSwitch:
+				ws.call(obwsrequests.SetSceneItemProperties(item = "kill switch status", visible = True))
+			elif not killSwitch:
+				ws.call(obwsrequests.SetSceneItemProperties(item = "kill switch status", visible = False))
 
 		# check if it's a valid controller
 		if newController in controllerNames:
@@ -57,10 +65,6 @@ async def controllerCheck():
 
 		# waiting so asyncio doesn't melt down
 		await asyncio.sleep(.1)
-
-# connecting to obs
-ws = obsws("localhost", 4444, config.get("obs", "websocket server password"))
-ws.connect()
 
 # setting up variables
 chatPlaying = False
