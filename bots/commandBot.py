@@ -174,7 +174,7 @@ class Bot(commands.Bot):
 
         config = configparser.ConfigParser()
         config.read(os.path.abspath((os.path.join(directory, "config.ini"))))
-        controlNames = {"peggle": "controllers.peggleController", "douggle": "controllers.peggleController", "stanley parable": "controllers.stanleyParableController", "tspud": "controllers.stanleyParableController", "ruby": "controllers.pokemonRubyController", "pokemonr ruby": "controllers.pokemonRubyController", "sapphire": "controllers.pokemonRubyController", "pokemon sapphire": "controllers.pokemonRubyController", "mario party": "controllers.marioPartyController", "infinite fusion": "controllers.pokemonInfiniteFusionController", "pokemon infinite fusion": "controllers.pokemonInfiniteFusionController", "none": "controllers.noController"}
+        controlNames = {"peggle": "controllers.peggleController", "douggle": "controllers.peggleController", "stanley parable": "controllers.stanleyParableController", "tspud": "controllers.stanleyParableController", "ruby": "controllers.pokemonRubyController", "pokemon ruby": "controllers.pokemonRubyController", "sapphire": "controllers.pokemonRubyController", "pokemon sapphire": "controllers.pokemonRubyController", "mario party": "controllers.marioPartyController", "infinite fusion": "controllers.pokemonInfiniteFusionController", "pokemon infinite fusion": "controllers.pokemonInfiniteFusionController", "none": "controllers.noController", "pajama sam": "controllers.pajamaSamController", "pj sam": "controllers.pajamaSamController"}
         controls = config.get("command bot", "controller").lower()
 
         # check if it's a valid controller

@@ -66,6 +66,9 @@ async def main():
             # start stream
             if not await commandBot.bot.fetch_streams(user_logins=[commandBot.yourChannelName]):
                 commandBot.ws.call(obwsrequests.StartStreaming())
+                commandBot.ws.call(obwsrequests.SetSceneItemProperties(item="hello world", visible=True))
+                await asyncio.sleep(5)
+                commandBot.ws.call(obwsrequests.SetSceneItemProperties(item="hello world", visible=False))
             if not chatPlaying:
                 await startChatPlays()
             if not inputBotPlaying:

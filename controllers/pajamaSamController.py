@@ -186,6 +186,7 @@ async def inputBot():
 
 # chat controls
 async def controller(message):
+    print(message)
     # makes sure chat is playing
     if chatPlays.chatPlaying is True and not chatPlays.killSwitch:
         global timeSinceLastMessage
