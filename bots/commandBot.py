@@ -174,12 +174,11 @@ class Bot(commands.Bot):
 
         config = configparser.ConfigParser()
         config.read(os.path.abspath((os.path.join(directory, "config.ini"))))
-        controlNames = {"peggle": "controllers.peggleController", "douggle": "controllers.peggleController", "stanley parable": "controllers.stanleyParableController", "tspud": "controllers.stanleyParableController", "ruby": "controllers.pokemonRubyController", "pokemon ruby": "controllers.pokemonRubyController", "sapphire": "controllers.pokemonRubyController", "pokemon sapphire": "controllers.pokemonRubyController", "mario party": "controllers.marioPartyController", "infinite fusion": "controllers.pokemonInfiniteFusionController", "pokemon infinite fusion": "controllers.pokemonInfiniteFusionController", "none": "controllers.noController", "pajama sam": "controllers.pajamaSamController", "pj sam": "controllers.pajamaSamController"}
         controls = config.get("command bot", "controller").lower()
 
         # check if it's a valid controller
-        if controls in controlNames:
-            module = importlib.import_module(controlNames[controls])
+        if controls in controllerNames:
+            module = importlib.import_module(controllerNames[controls])
             await asyncio.create_task(module.controller(message))
         await self.handle_commands(message)
 
