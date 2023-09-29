@@ -25,7 +25,7 @@ async def idleBot():
             # 25% chance of non directionals
             dice = random.randint(1, 4)
             if dice == 1:
-                await shoot()
+                await click()
 
             # 75% chance of directionals
             else:
@@ -73,7 +73,7 @@ async def inputBot():
                         case 4:
                             await right()
                         case 5:
-                            await shoot()
+                            await click()
 
             # chris snack controls
             elif chatPlays.currentSnack == "chris":
@@ -95,7 +95,7 @@ async def inputBot():
                         case 4:
                             await right()
                         case 5:
-                            await shoot()
+                            await click()
 
             # burst snack controls
             elif chatPlays.currentSnack == "burst":
@@ -118,7 +118,7 @@ async def inputBot():
                             case 4:
                                 await right()
                             case 5:
-                                await shoot()
+                                await click()
 
             # silly snack controls
             elif chatPlays.currentSnack == "silly":
@@ -194,8 +194,8 @@ async def controller(message):
         message = message.content.lower()
 
         # making inputs
-        if "shoot" in message:
-            await shoot()
+        if "click" in message:
+            await click()
         elif "up" in message:
             await up()
         elif "down" in message:
@@ -233,7 +233,7 @@ async def right():
         pyautogui.moveTo(screenBoundaries[2], pyautogui.position().y, duration=.5)
 
 
-async def shoot():
+async def click():
     if (quitButtonBoundaries[0] > pyautogui.position().x or pyautogui.position().x > quitButtonBoundaries[2]) or (quitButtonBoundaries[1] > pyautogui.position().y or pyautogui.position().y > quitButtonBoundaries[3]):
         pyautogui.mouseDown()
         await asyncio.sleep(.5)
