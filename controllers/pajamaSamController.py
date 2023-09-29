@@ -205,7 +205,7 @@ async def controller(message):
             await right()
 
 async def up():
-    if pyautogui.position().y - screenBoundaries[1] > 10:
+    if pyautogui.position().y - 50 > screenBoundaries[1]:
         pyautogui.moveTo(pyautogui.position().x, pyautogui.position().y - 50, duration=.5)
     else:
         pyautogui.moveTo(pyautogui.position().x, screenBoundaries[1], duration=.5)
