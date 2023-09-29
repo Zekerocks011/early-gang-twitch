@@ -495,7 +495,6 @@ async def sprint():
     await chatPlays.holdKey(chatPlays.keyCodes.get("CONTROL"))
 
 async def unsneak():
-    print("unsneak")
     await chatPlays.releaseKey(chatPlays.keyCodes.get("SHIFT"))
 
 async def unsprint():

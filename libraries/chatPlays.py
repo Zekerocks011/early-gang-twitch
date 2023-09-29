@@ -111,6 +111,7 @@ async def startInputBot():
 async def stopInputBot():
 	global inputBotPlaying
 	inputBotPlaying = False
+	inputBotTask.cancel()
 
 # starts idle bot
 async def startIdleBot():
@@ -122,6 +123,7 @@ async def startIdleBot():
 async def stopIdleBot():
 	global idleBotPlaying
 	idleBotPlaying = False
+	idleBotTask.cancel()
 
 # allows the program to start taking and executing commands from chat messages
 async def startChatPlays():
