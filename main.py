@@ -36,7 +36,11 @@ async def main():
 
                 # start raid
                 users = await commandBot.bot.fetch_users([commandBot.yourChannelName, commandBot.streamerChannelName])
-                await users[0].start_raid(commandBot.accessToken, users[1].id)
+
+                try:
+                    await users[0].start_raid(commandBot.accessToken, users[1].id)
+                except:
+                    print("FUCK TWITCH")
                 
                 # display timer
                 commandBot.ws.call(obwsrequests.SetSceneItemProperties(item = "raid status", visible = True))
