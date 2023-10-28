@@ -2,7 +2,7 @@
 # don't fuck with this too much unless you're familiar with twitchio and how it works
 # not much documentation here because even i don't know what the fuck this object oriented programming is doing in python
 
-import aiohttp, time, traceback, random, base64, requests, os, sys; from urllib.parse import urlencode; from twitchio.ext import commands; from libraries.chatPlays import *
+import aiohttp, time, traceback, random, base64, requests, os, sys, open; from urllib.parse import urlencode; from twitchio.ext import commands; from libraries.chatPlays import *; from libraries.music import userAddToQueue; from libraries.music import forceSkip
 
 # setting directory if file is ran correctly
 directory = ""
@@ -46,9 +46,6 @@ clientID = config.get("twitch", "client id")
 accessToken = config.get("twitch", "access token")
 streamerChannelName = config.get("twitch", "streamer channel name")
 yourChannelName = config.get("twitch", "your channel name")
-spotifyClientID = config.get("spotify", "client id")
-spotifyClientSecret = config.get("spotify", "client secret")
-spotifyRefreshToken = config.get("spotify", "spotify refresh token")
 
 # setting up variables
 ws = obsws("localhost", 4444, config.get("obs", "websocket server password"))
@@ -71,29 +68,6 @@ for i in mouseKey.split("."):
         else:
             token += char
     tokens += [token]
-
-# if you don't have a refresh token
-if spotifyRefreshToken == "":
-
-    # getting code from user
-    print(f'authorize this script by going to:\n{"https://accounts.spotify.com/authorize" + "?" + urlencode({"client_id": spotifyClientID, "response_type": "code", "redirect_uri": "http://localhost:8888/callback", "scope": "user-read-currently-playing user-modify-playback-state"})}')
-    authorizationCode = input("enter the authorization code found in the redirected url after \"code=\": ")
-
-    # gets access token and refresh token using the code
-    response = requests.post("https://accounts.spotify.com/api/token", auth = (spotifyClientID, spotifyClientSecret), data = {"grant_type": "authorization_code", "code": authorizationCode, "redirect_uri": "http://localhost:8888/callback"})
-
-    # writes refresh token to info file for future use
-    if 'refresh_token' in response.json():
-        with open(os.path.abspath((os.path.join(directory, "config.ini"))), 'r') as file:
-            lines = file.readlines()
-            for i, line in enumerate(lines):
-                if line.startswith("spotify refresh token ="):
-                    lines[i] = "spotify refresh token = " + response.json()["refresh_token"] + "\n"
-                    break
-            with open(os.path.abspath((os.path.join(directory, "config.ini"))), "w") as file:
-                file.writelines(lines)
-    else:
-        print("\033[91mSPOTIFY FUCKED UP\033[0m")
 
 class Bot(commands.Bot):
 
@@ -230,10 +204,6 @@ class Bot(commands.Bot):
     async def donate(self, ctx: commands.Context):
         await ctx.send("[bot] https://tiltify.com/@early-gang/profile")
 
-    # sends link to stream music playlist
-    @commands.command()
-    async def playlist(self, ctx: commands.Context):
-        await ctx.send("[bot] https://open.spotify.com/playlist/2zBtOh6PAFBGCnlA7oSsEm?si=4a576dfd1c534357")
 
     # allows mods to start stream
     @commands.command()
@@ -259,27 +229,23 @@ class Bot(commands.Bot):
     # sends a message with the currently playing song
     @commands.command()
     async def song(self, ctx: commands.Context):
-        async with aiohttp.ClientSession() as session:
+        try:
+            with open('./libraries/title.txt', 'r') as f:
+                contents = f.read()
+            await ctx.reply(f"The song currently playing is: {contents}")
+        except:
+            await ctx.reply("The command errored!") 
 
-            # create access token
-            async with session.post("https://accounts.spotify.com/api/token", headers={"Authorization": "Basic " + base64.b64encode(f"{spotifyClientID}:{spotifyClientSecret}".encode()).decode()}, data={"grant_type": "refresh_token", "refresh_token": spotifyRefreshToken}) as response:
-                data = await response.json()
-                if "access_token" in data:
-                    accessToken = data["access_token"]
-                else:
-                    print("\033[91mSPOTIFY FUCKED UP\033[0m")
-                    accessToken = None
-
-            # get song
-            if accessToken:
-                async with session.get("https://api.spotify.com/v1/me/player/currently-playing", headers = {"Authorization": "Bearer " + accessToken}) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        if data["is_playing"]:
-                            await ctx.send("[bot] " + data["item"]["name"] + " by " + data["item"]["artists"][0]["name"])
-                        else:
-                            await ctx.send("[bot] no song playing")
-                    else:
-                        await ctx.send("[bot] can't get song")
-
+    # allows mods to force skip a song
+    @commands.command()
+    async def forceskip(self, ctx: commands.Context):
+        if ctx.author.name in tokens:
+            await forceSkip()
+            ctx.reply("Successfully attempted to force skip song.")
+    
+    # allows someone to request a song
+    @commands.command()
+    async def request(self, ctx: commands.Context):
+        await userAddToQueue(ctx.message.content, ctx.message.author.display_name)
+        ctx.reply("Successfully attempted to add song to queue.")
 bot = Bot()
