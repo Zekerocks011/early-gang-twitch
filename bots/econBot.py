@@ -3,11 +3,25 @@
 # also you gotta know how to use sqlite3 so good luck ;)
 # not much documentation here because even i don't know what the fuck this object oriented programming shit is doing in python
 
-import sys, traceback, aiohttp, aiosqlite, time, os, random; from twitchio.ext import commands; from libraries.chatPlays import *; from bots import commandBot; from libraries import chatPlays
+# imports
+import sys
+import traceback
+import aiohttp
+import aiosqlite
+import random
+import time
+import asyncio
+from twitchio.ext import commands
+from libraries.chatPlays import *
+from bots import commandBot
+from libraries import chatPlays
+import os
 
 # setting up variables
 chatters = []
 live = False
+firstRedeemed = True
+activeCodes = []
 trialOngoing = False
 voters = []
 verdict = []
@@ -27,7 +41,9 @@ class Bot(commands.Bot):
 
     # does whenever a message is sent
     async def event_message(self, message):
-        global trialOngoing, verdict, voters
+        global trialOngoing
+        global verdict
+        global voters
 
         # don't take bot responses as real messages
         if message.echo:
@@ -157,9 +173,9 @@ class Bot(commands.Bot):
 
             # outputting based on command
             if ctx.message.content == "!watchtime" or ctx.message.content == "!watchtime ":
-                await ctx.send("[bot] " + ctx.author.name + " has watched " + commandBot.yourChannelName + " for " + duration)
+                await ctx.reply("" + ctx.author.name + " has watched " + commandBot.yourChannelName + " for " + duration)
             else:
-                await ctx.send("[bot] " + ctx.message.content + " has watched " + commandBot.yourChannelName + " for " + duration)
+                await ctx.reply("" + ctx.message.content + " has watched " + commandBot.yourChannelName + " for " + duration)
 
     # tells the user how many points they have
     @commands.command()
@@ -174,7 +190,7 @@ class Bot(commands.Bot):
 
             # sending result if id exists
             if result:
-                await ctx.send("[bot] " + ctx.author.name + " has " + str(result[2]) + " basement pesos")
+                await ctx.reply("" + ctx.author.name + " has " + str(result[2]) + " basement pesos")
 
         # letting whitelisters check others' points
         else:
@@ -188,7 +204,7 @@ class Bot(commands.Bot):
 
                 # sending result if id exists
                 if result:
-                    await ctx.send("[bot] " + ctx.message.content + " has " + str(result[2]) + " basement pesos")
+                    await ctx.reply("" + ctx.message.content + " has " + str(result[2]) + " basement pesos")
 
     # lets users give their points to each other
     @commands.command()
@@ -199,7 +215,7 @@ class Bot(commands.Bot):
 
             # error handling
             if ctx.message.content == "!givebp" or ctx.message.content == "!givebp ":
-                await ctx.send("please include the user and amount your command messages formatted like !giveBP user 100")
+                await ctx.reply("please include the user and amount your command messages formatted like !giveBP user 100")
 
             # finding and updating the appropriate points
             else:
@@ -214,16 +230,16 @@ class Bot(commands.Bot):
                             await cursor.execute("UPDATE economy SET points=? WHERE id=?", ((result[2] + int(ctx.message.content[1])), users[0].id, ))
                             await db.commit()
 
-                    await ctx.send("[bot] gave " + ctx.message.content[0] + " " + ctx.message.content[1] + " basement pesos")
+                    await ctx.reply("Gave " + ctx.message.content[0] + " " + ctx.message.content[1] + " basement pesos")
                 else:
-                    await ctx.send("[bot] no bribery")
+                    await ctx.reply("No bribery")
 
         # actually transfer money if it's not a whitelister
         else:
 
             # error handling
             if ctx.message.content == "!givebp" or ctx.message.content == "!givebp ":
-                await ctx.send("please include the user and amount your command messages formatted like !giveBP user 100")
+                await ctx.reply("please include the user and amount your command messages formatted like !giveBP user 100")
 
             # finding and updating the appropriate points
             else:
@@ -233,7 +249,7 @@ class Bot(commands.Bot):
 
                 # no stealing >:)
                 if int(ctx.message.content[1]) < 0:
-                    await ctx.send("[bot] nice try")
+                    await ctx.reply("Nice try")
 
                 # if both users exist
                 elif ctx.author.id and users[0].id:
@@ -248,10 +264,10 @@ class Bot(commands.Bot):
 
                         # check if giver has enough points
                         if giver[2] <= int(ctx.message.content[1]):
-                            await ctx.send("[bot] not enough basement pesos")
+                            await ctx.reply("Not enough basement pesos")
 
-                        elif str(ctx.author.name.lower()) == str((ctx.message.content[0]).lower()):
-                            await ctx.send("[bot] nice try")
+                        elif str((ctx.author.name).lower()) == str((ctx.message.content[0]).lower()):
+                            await ctx.reply("Nice try")
 
                         # transfer money
                         elif giver and taker:
@@ -259,13 +275,13 @@ class Bot(commands.Bot):
                             await db.execute("UPDATE economy SET points=? WHERE id=?", ((taker[2] + int(ctx.message.content[1])), users[0].id))
                             await db.commit()
 
-                            await ctx.send("[bot] " + ctx.author.name + " gave " + ctx.message.content[0] + " " + ctx.message.content[1] + " basement pesos")
+                            await ctx.reply("" + ctx.author.name + " gave " + ctx.message.content[0] + " " + ctx.message.content[1] + " basement pesos")
 
                         # error handling
                         else:
-                            await ctx.send("[bot] couldn't find at least one user")
+                            await ctx.reply("Couldn't find at least one user")
                 else:
-                    await ctx.send("[bot] couldn't find at least one user")
+                    await ctx.reply("Couldn't find at least one user")
 
     # lets whitelisters take points
     @commands.command()
@@ -275,7 +291,7 @@ class Bot(commands.Bot):
         if ctx.author.name in commandBot.tokens:
             # error handling
             if ctx.message.content == "!bptax" or ctx.message.content == "!bptax ":
-                await ctx.send("please include the user and amount your command messages formatted like !bpTax user, 100")
+                await ctx.reply("Please include the user and amount your command messages formatted like !bpTax user, 100")
 
             # finding and updating the appropriate points
             else:
@@ -285,7 +301,7 @@ class Bot(commands.Bot):
 
                 # no negative numbers
                 if int(ctx.message.content[1]) < 0:
-                    await ctx.send("[bot] nice try")
+                    await ctx.reply("Nice try")
 
                 # seeing if user exists
                 elif users[0].id:
@@ -297,17 +313,18 @@ class Bot(commands.Bot):
                         if result:
                             await db.execute("UPDATE economy SET points=? WHERE id=?", (result[2] - int(ctx.message.content[1]), users[0].id))
                             await db.commit()
-                            await ctx.send("[bot] took from " + ctx.message.content[0] + " " + ctx.message.content[1] + " basement pesos")
+                            await ctx.reply("Took from " + ctx.message.content[0] + " " + ctx.message.content[1] + " basement pesos")
 
     # lists commands available for purchase
     @commands.command()
     async def bpshop(self, ctx: commands.Context):
-        await ctx.send("[bot] !shoot (1000), !shootsnack (800), !swapsnack (150), !healsnack (500), !sue (???)")
+        await ctx.reply("!shoot (1000), !shootsnack (800), !swapsnack (150), !healsnack (500)")
 
     # times out user
     @commands.command()
     async def shoot(self, ctx: commands.Context):
         duration = random.randint(10, 60)
+        finalId = ""
         user = await commandBot.bot.fetch_users([commandBot.yourChannelName])
 
         # thread to wait to remod a mod after timing them out
@@ -325,7 +342,7 @@ class Bot(commands.Bot):
                             async with session.get("https://api.twitch.tv/helix/users") as response:
                                 rateLimit = response.headers.get("Ratelimit-Remaining")
                                 if rateLimit != "0":
-                                    await session.post("https://api.twitch.tv/helix/moderation/moderators?broadcaster_id=" + str(user[0].id) + "&user_id=" + id)
+                                    await session.post("https://api.twitch.tv/helix/moderation/moderators?broadcaster_id=" + str(user[0].id )+ "&user_id=" + id)
                                     async with session.get("https://api.twitch.tv/helix/moderation/moderators?broadcaster_id=" + str(user[0].id)) as response:
                                         modIds = []
                                         for mod in (await response.json()).get("data"):
@@ -363,7 +380,7 @@ class Bot(commands.Bot):
 
                 # check if user has the money
                 if result[2] < 1000 and ctx.author.name not in commandBot.tokens:
-                    await ctx.send("[bot] not enough basement pesos")
+                    await ctx.reply("Not enough basement pesos")
                 else:
                     if ctx.author.name not in commandBot.tokens:
                         await db.execute("UPDATE economy SET points=? WHERE id=?", ((result[2] - 1000), ctx.author.id))
@@ -394,7 +411,7 @@ class Bot(commands.Bot):
                                 item = item.replace("\"", "")
 
                         async with db.execute("SELECT action FROM pastTenseActions ORDER BY RANDOM() LIMIT 1") as cursor:
-                            pastTenseAction = str(await cursor.fetchone()).replace("(", "").replace(")", "").replace(",", "")
+                            pastTenseAction = str(await cursor.fetchone()).replace("(", "").replace(")", "").replace(",","")
                             if pastTenseAction[0] == "\'":
                                 pastTenseAction = pastTenseAction.replace("\'", "")
                             else:
@@ -405,7 +422,7 @@ class Bot(commands.Bot):
                         await user[1].timeout_user(commandBot.accessToken, user[1].id, user[0].id, duration, "you got shot")
                     except:
                         pass
-                    await ctx.send("[bot] " + ctx.author.name + " " + pastTenseAction + " " + user[0].name + " with " + item)
+                    await ctx.reply("" + ctx.author.name + " " + pastTenseAction + " " + user[0].name + " with " + item)
 
                     # setting up remod thread if needed
                     if str(user[0].id) in modIds:
@@ -420,7 +437,7 @@ class Bot(commands.Bot):
 
                 # check if the user has the money
                 if result[2] < 1000 and ctx.author.name not in commandBot.tokens:
-                    await ctx.send("[bot] not enough basement pesos")
+                    await ctx.reply("Not enough basement pesos")
                 else:
                     if ctx.author.name not in commandBot.tokens:
                         await db.execute("UPDATE economy SET points=? WHERE id=?", ((result[2] - 1000), ctx.author.id))
@@ -433,7 +450,7 @@ class Bot(commands.Bot):
 
                     # error handling
                     if id is None:
-                        await ctx.send("[bot] couldn't find user")
+                        await ctx.reply("Couldn't find user")
 
                     # shooting based on dice
                     else:
@@ -462,7 +479,7 @@ class Bot(commands.Bot):
                         # 10% chance to shoot yourself
                         if dice > 90:
                             finalId = ctx.author.id
-                            await ctx.send("[bot] " + ctx.author.name + " missed and " + item + " bounced into their head")
+                            await ctx.reply("" + ctx.author.name + " missed and " + item + " bounced into their head")
 
                         # 65% chance to shoot random
                         elif dice > 25:
@@ -483,12 +500,12 @@ class Bot(commands.Bot):
                             names = [[element.get("user_id"), element.get("user_name")] for element in response.get("data")]
                             chat = names[random.randint(0, len(names) - 1)]
                             finalId = chat[0]
-                            await ctx.send("[bot] " + ctx.author.name + " tried to " + presentTenseAction + " " + ctx.message.content + " with " + item + " but they used " + chat[1] + " as a shield")
+                            await ctx.reply("" + ctx.author.name + " tried to " + presentTenseAction + " " + ctx.message.content + " with " + item + " but they used " + chat[1] + " as a shield")
 
                         # 25% chance to shoot target
                         else:
                             finalId = id
-                            await ctx.send("[bot] " + ctx.author.name + " " + pastTenseAction + " " + ctx.message.content + " with " + item)
+                            await ctx.reply("" + ctx.author.name + " " + pastTenseAction + " " + ctx.message.content + " with " + item)
 
                         try:
                             await user[0].timeout_user(commandBot.accessToken, user[0].id, finalId, duration, "you got shot")
@@ -516,7 +533,7 @@ class Bot(commands.Bot):
 
             # check if user has the money
             if result[2] < 800 and ctx.author.name not in commandBot.tokens:
-                await ctx.send("[bot] not enough basement pesos")
+                await ctx.reply("Not enough basement pesos")
             else:
                 if ctx.author.name not in commandBot.tokens:
                     await db.execute("UPDATE economy SET points=? WHERE id=?", ((result[2] - 800), ctx.author.id))
@@ -544,7 +561,7 @@ class Bot(commands.Bot):
                 # disabling input bot
                 chatPlays.snackShot = True
                 chatPlays.snackHealed = False
-                await ctx.send("[bot] " + ctx.author.name + " " + action + " " + chatPlays.currentSnack + " snack with " + item)
+                await ctx.reply("" + ctx.author.name + " " + action + " " + chatPlays.currentSnack + " snack with " + item)
                 if not chatPlays.idleBotStatus:
                     await updateSnatus()
                 asyncio.create_task(snackWait())
@@ -559,7 +576,7 @@ class Bot(commands.Bot):
 
             # check if user has the money
             if result[2] < 500 and ctx.author.name not in commandBot.tokens:
-                await ctx.send("[bot] not enough basement pesos")
+                await ctx.reply("Not enough basement pesos")
             else:
                 if ctx.author.name not in commandBot.tokens:
                     await db.execute("UPDATE economy SET points=? WHERE id=?", ((result[2] - 500), ctx.author.id))
@@ -581,9 +598,9 @@ class Bot(commands.Bot):
                     chatPlays.snackHealed = True
                     if not chatPlays.idleBotStatus:
                         await updateSnatus()
-                    await ctx.send("[bot] " + ctx.author.name + " healed " + chatPlays.currentSnack + " snack with " + item)
+                    await ctx.reply("" + ctx.author.name + " healed " + chatPlays.currentSnack + " snack with " + item)
                 else:
-                    await ctx.send("[bot] " + ctx.author.name + " failed to heal " + chatPlays.currentSnack + " snack with " + item)
+                    await ctx.reply("" + ctx.author.name + " failed to heal " + chatPlays.currentSnack + " snack with " + item)
 
     # changes input bot type
     @commands.command()
@@ -596,94 +613,100 @@ class Bot(commands.Bot):
 
             # check if the user has enough money
             if result[2] < 150 and ctx.author.name not in commandBot.tokens:
-                await ctx.send("[bot] not enough basement pesos")
+                await ctx.reply("Not enough basement pesos")
             else:
                 if ctx.author.name not in commandBot.tokens:
                     await db.execute("UPDATE economy SET points=? WHERE id=?", ((result[2] - 150), ctx.author.id))
                     await db.commit()
 
-                chatPlays.currentSnack = snacks[random.randint(0, len(snacks) - 1)]
-                await ctx.send("[bot] " + chatPlays.currentSnack + " snack was swapped in")
+                commandBot.chatPlays.currentSnack = snacks[random.randint(0, len(snacks) - 1)]
+                await ctx.reply("" + chatPlays.currentSnack + " snack was swapped in")
                 if not chatPlays.idleBotStatus:
                     await updateSnatus()
     
     # creates a poll and lets chatters vote on who's guilty
     @commands.command()
     async def sue(self, ctx: commands.Context):
-        global trialOngoing, voters, verdict
+        global trialOngoing
+        global voters
+        global verdict
 
-        ctx.message.content = ctx.message.content.replace("!sue ", "")
-        ctx.message.content = ctx.message.content.split()
-
-        if len(ctx.message.content) < 2:
-            await ctx.send("please include the user and amount your command messages formatted like !sue user amount")
+        if ctx.message.content == "!sue" or ctx.message.content == "!sue ":
+            await ctx.reply("please include the user and amount your command messages formatted like !sue user amount")
         else:
+
+            # extracting info
+            ctx.message.content = ctx.message.content.replace("!sue ", "")
+            ctx.message.content = ctx.message.content.split()
             users = await commandBot.bot.fetch_users([ctx.message.content[0]])
 
             # setting up trial
             trialOngoing = True
             voters = [ctx.author.name, ctx.message.content[0]]
             verdict = [0, 0]
-            await ctx.send("the trial of " + ctx.author.name + " v. " + ctx.message.content[0] + " has commenced. type \"guilty\" or \"not guilty\" to vote")
-            await asyncio.sleep(30)
+            await ctx.reply("the trial of " + ctx.author.name + " v. " + ctx.message.content[0] + " has commenced. type \"guilty\" or \"not guilty\" to vote")
+            await asyncio.sleep(10)
 
             # delivering the verdict
-            if verdict[0] > verdict[1]:
-                await ctx.send("the verdict is... GUILTY")
+            if verdict[0] > verdict [1]:
+                await ctx.reply("the verdict is... GUILTY")
 
                 async with aiosqlite.connect(os.path.abspath(os.path.join(commandBot.directory, "chatData.db"))) as db:
                         
-                    # take the amount from listed person and give it to the user
-                    async with aiosqlite.connect(os.path.abspath((os.path.join(commandBot.directory, "chatData.db")))) as db:
-                        async with db.execute("SELECT * FROM economy WHERE id=?", (ctx.author.id,)) as cursor:
-                            suer = await cursor.fetchone()
+                        # take the amount from listed person and give it to the user
+                        async with aiosqlite.connect(os.path.abspath((os.path.join(commandBot.directory, "chatData.db")))) as db:
+                            async with db.execute("SELECT * FROM economy WHERE id=?", (ctx.author.id,)) as cursor:
+                                suer = await cursor.fetchone()
 
-                        async with db.execute("SELECT * FROM economy WHERE id=?", (users[0].id,)) as cursor:
-                            suee = await cursor.fetchone()
-                            if suee[2] < int(ctx.message.content[1]):
-                                ctx.message.content[1] = suee[2]
+                            async with db.execute("SELECT * FROM economy WHERE id=?", (users[0].id,)) as cursor:
+                                suee = await cursor.fetchone()
+                                if suee[2] < int(ctx.message.content[1]):
+                                    ctx.message.content[1] = suee[2]
 
-                        if str(ctx.author.name.lower()) != str((ctx.message.content[0]).lower()) and suee and suer:
-                            await db.execute("UPDATE economy SET points=? WHERE id=?", ((suee[2] - int(ctx.message.content[1])), users[0].id))
-                            await db.execute("UPDATE economy SET points=? WHERE id=?", ((suer[2] + int(ctx.message.content[1])), ctx.author.id))
-                            await db.commit()
+                            if str((ctx.author.name).lower()) != str((ctx.message.content[0]).lower()) and suee and suer:
+                                await db.execute("UPDATE economy SET points=? WHERE id=?", ((suee[2] - int(ctx.message.content[1])), users[0].id))
+                                await db.execute("UPDATE economy SET points=? WHERE id=?", ((suer[2] + int(ctx.message.content[1])), ctx.author.id))
+                                await db.commit()                                    
 
-            elif verdict[0] < verdict[1]:
-                await ctx.send("the verdict is... NOT GUILTY")
+            elif verdict[0] < verdict [1]:
+                await ctx.reply("the verdict is... NOT GUILTY")
                 async with aiosqlite.connect(os.path.abspath(os.path.join(commandBot.directory, "chatData.db"))) as db:
                         
-                    # take the amount from the user and give it to the listed person
-                    async with aiosqlite.connect(os.path.abspath((os.path.join(commandBot.directory, "chatData.db")))) as db:
-                        async with db.execute("SELECT * FROM economy WHERE id=?", (ctx.author.id,)) as cursor:
-                            suer = await cursor.fetchone()
-                            if suer[2] < ctx.message.content[1]:
-                                ctx.message.content[1] = suer[2]
+                        # take the amount from the user and give it to the listed person
+                        async with aiosqlite.connect(os.path.abspath((os.path.join(commandBot.directory, "chatData.db")))) as db:
+                            async with db.execute("SELECT * FROM economy WHERE id=?", (ctx.author.id,)) as cursor:
+                                suer = await cursor.fetchone()
+                                if suee[2] < ctx.message.content[1]:
+                                    ctx.message.content[1] == suee[2]
 
-                        async with db.execute("SELECT * FROM economy WHERE id=?", (users[0].id,)) as cursor:
-                            suee = await cursor.fetchone()
+                            async with db.execute("SELECT * FROM economy WHERE id=?", (users[0].id,)) as cursor:
+                                suee = await cursor.fetchone()
 
-                        if str(ctx.author.name.lower()) != str((ctx.message.content[0]).lower()) and suee and suer:
-                            await db.execute("UPDATE economy SET points=? WHERE id=?", ((suee[2] + int(ctx.message.content[1])), users[0].id))
-                            await db.execute("UPDATE economy SET points=? WHERE id=?", ((suer[2] - int(ctx.message.content[1])), ctx.author.id))
-                            await db.commit()
+                            if str((ctx.author.name).lower()) != str((ctx.message.content[0]).lower()) and suee and suer:
+                                await db.execute("UPDATE economy SET points=? WHERE id=?", ((suee[2] + int(ctx.message.content[1])), users[0].id))
+                                await db.execute("UPDATE economy SET points=? WHERE id=?", ((suer[2] - int(ctx.message.content[1])), ctx.author.id))
+                                await db.commit()             
 
             else:
-                await ctx.send("the verdict is... MISTRIAL")
+                await ctx.reply("the verdict is... MISTRIAL")
 
     # as soon as bot is logged in constantly check the array and update watch time and points
     async def updateWatchTime(self):
-        global chatters, live
+        global chatters
+        global live
+        global firstRedeemed
 
         while True:
             await asyncio.sleep(10)
 
             # when channel goes live reset uptime and !first
-            if await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]):
+            if await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]) != []:
                 if not live:
                     for element in chatters:
                         element[1] = time.time()
                         element[2] = time.time()
                     live = True
+                    firstRedeemed = False
 
                 # update database for all users in chat
                 for chatter in chatters:
