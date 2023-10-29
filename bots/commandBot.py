@@ -48,9 +48,9 @@ streamerChannelName = config.get("twitch", "streamer to raid channel name")
 yourChannelName = config.get("twitch", "your channel name")
 
 # setting up variables
-# print("got here")
-ws = obsws(config.get("obs", "ip"), config.get("obs", "port"), config.get("obs", "websocket server password"))
-# print("got here")
+print("got here")
+ws = obsws(config.get("obs", "ip"), int(config.get("obs", "port")), config.get("obs", "websocket server password"))
+print("got here")
 whiteListers = ["dougdoug", "parkzer", "GalarianGuy", "Zekerocks011", "dd_ghost1", "fratriarch"]
 chatters = []
 blockedTerms = ["deez nuts", "deez nuts gottem", "D:\\ eez nuts"]
