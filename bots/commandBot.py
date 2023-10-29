@@ -2,7 +2,7 @@
 # don't fuck with this too much unless you're familiar with twitchio and how it works
 # not much documentation here because even i don't know what the fuck this object oriented programming is doing in python
 
-import aiohttp, time, traceback, random, base64, requests, os, sys, open; from urllib.parse import urlencode; from twitchio.ext import commands; from libraries.chatPlays import *; from libraries.music import userAddToQueue; from libraries.music import forceSkip
+import aiohttp, time, traceback, random, base64, requests, os, sys; from urllib.parse import urlencode; from twitchio.ext import commands; from libraries.chatPlays import *; from libraries.music import *
 
 # setting directory if file is ran correctly
 directory = ""
@@ -42,14 +42,16 @@ else:
 # reading config
 config = configparser.ConfigParser()
 config.read(os.path.abspath((os.path.join(directory, "config.ini"))))
-clientID = config.get("twitch", "client id")
-accessToken = config.get("twitch", "access token")
-streamerChannelName = config.get("twitch", "streamer channel name")
+clientID = config.get("twitch", "bot client id")
+accessToken = config.get("twitch", "bot access token")
+streamerChannelName = config.get("twitch", "streamer to raid channel name")
 yourChannelName = config.get("twitch", "your channel name")
 
 # setting up variables
-ws = obsws("localhost", 4444, config.get("obs", "websocket server password"))
-whiteListers = ["dougdoug", "parkzer", "gwrbull", "sna1l_boy", "jaytsoul", "purpledalek", "ramcicle", "fratriarch"]
+# print("got here")
+ws = obsws(config.get("obs", "ip"), config.get("obs", "port"), config.get("obs", "websocket server password"))
+# print("got here")
+whiteListers = ["dougdoug", "parkzer", "GalarianGuy", "Zekerocks011", "dd_ghost1", "fratriarch"]
 chatters = []
 blockedTerms = ["deez nuts", "deez nuts gottem", "D:\\ eez nuts"]
 
@@ -161,7 +163,7 @@ class Bot(commands.Bot):
     async def controls(self, ctx: commands.Context):
         global config
         config.read(os.path.abspath((os.path.join(directory, "config.ini"))))
-        await ctx.send("[bot] " + config.get("command bot", "!controls"))
+        await ctx.send("These are the commands that you can use: " + config.get("command bot", "!controls"))
 
     # sends what's going on
     @commands.command()
@@ -173,50 +175,48 @@ class Bot(commands.Bot):
     # sends dougdoug channel link
     @commands.command()
     async def dougdoug(self, ctx: commands.Context):
-        await ctx.send("[bot] https://www.twitch.tv/dougdoug")
+        await ctx.send("Dogshit: https://www.twitch.tv/dougdoug")
 
     # sends a list of all the bots
     @commands.command()
     async def bots(self, ctx: commands.Context):
         global config
         config.read(os.path.abspath((os.path.join(directory, "config.ini"))))
-        await ctx.send("[bot] " + config.get("command bot", "!bots"))
+        await ctx.send("These are the current list of bots: " + config.get("command bot", "!bots"))
 
     # sends a list of commands
     @commands.command()
     async def menu(self, ctx: commands.Context):
         global config
         config.read(os.path.abspath((os.path.join(directory, "config.ini"))))
-        await ctx.send("[bot] " + config.get("command bot", "!menu"))
+        await ctx.send("This is a list of commands: " + config.get("command bot", "!menu"))
 
     # sends a list of sll the different input bots
     @commands.command()
     async def snackfamily(self, ctx: commands.Context):
-        await ctx.send("[bot] sleepy, chris, burst, silly, cautious, sonic")
+        await ctx.send("These are all the different types of input bots: sleepy, chris, burst, silly, cautious, sonic")
 
     # sends link to discord
     @commands.command()
     async def discord(self, ctx: commands.Context):
-        await ctx.send("[bot] https://discord.gg/cnrvMKfacy")
+        await ctx.send("Come join the community in our discord server! Link: https://discord.gg/cnrvMKfacy")
 
-    # sends link to tiltify page
+    # sends link to stream music playlist
     @commands.command()
-    async def donate(self, ctx: commands.Context):
-        await ctx.send("[bot] https://tiltify.com/@early-gang/profile")
-
+    async def playlist(self, ctx: commands.Context):
+        await ctx.send("This is the link to the stream music playlist: https://www.youtube.com/playlist?list=PLzTxt5iYdhzifPXw_g0hWp0YgFetgazuv")
 
     # allows mods to start stream
     @commands.command()
     async def startstream(self, ctx: commands.Context):
         if ctx.author.name in tokens:
-            ws.call(obwsrequests.StartStreaming())
+             ws.call(obwsrequests.StartStreaming())
     
     # allows mods to stop stream
     @commands.command()
     async def stopstream(self, ctx: commands.Context):
         if ctx.author.name in tokens:
             ws.call(obwsrequests.StopStreaming())
-            exit()
     
     # allows mods to raid
     @commands.command()
@@ -224,26 +224,22 @@ class Bot(commands.Bot):
         if ctx.author.name in tokens:
             ctx.message.content = ctx.message.content.replace("!raid ", "")
             users = await bot.fetch_users([yourChannelName, ctx.message.content])
+            print(users)
             await users[0].start_raid(accessToken, users[1].id)
 
     # sends a message with the currently playing song
     @commands.command()
-    async def song(self, ctx: commands.Context):
-        try:
-            with open('./libraries/title.txt', 'r') as f:
-                contents = f.read()
-            await ctx.reply(f"The song currently playing is: {contents}")
-        except:
-            await ctx.reply("The command errored!") 
-
-    # allows mods to force skip a song
+    async def nowplaying(self, ctx: commands.Context):
+        with open('title.txt', 'r') as f:
+            contents = f.read()
+        await ctx.cend(f"The current song playing is: {contents}")
+    # allows mods to forceskip a song
     @commands.command()
     async def forceskip(self, ctx: commands.Context):
         if ctx.author.name in tokens:
             await forceSkip()
             ctx.reply("Successfully attempted to force skip song.")
-    
-    # allows someone to request a song
+
     @commands.command()
     async def request(self, ctx: commands.Context):
         await userAddToQueue(ctx.message.content, ctx.message.author.display_name)
