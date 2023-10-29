@@ -2,7 +2,7 @@
 # don't fuck with this too much unless you're familiar with twitchio and how it works
 # not much documentation here because even i don't know what the fuck this object oriented programming is doing in python
 
-import aiohttp, time, traceback, random, base64, requests, os, sys; from urllib.parse import urlencode; from twitchio.ext import commands; from libraries.chatPlays import *; from libraries.music import *
+import aiohttp, time, traceback, random, base64, requests, os, sys; from urllib.parse import urlencode; from twitchio.ext import commands; from libraries.chatPlays import *
 
 # setting directory if file is ran correctly
 directory = ""
@@ -199,6 +199,7 @@ class Bot(commands.Bot):
     # sends link to discord
     @commands.command()
     async def discord(self, ctx: commands.Context):
+        print("got here")
         await ctx.send("Come join the community in our discord server! Link: https://discord.gg/cnrvMKfacy")
 
     # sends link to stream music playlist
@@ -209,39 +210,21 @@ class Bot(commands.Bot):
     # allows mods to start stream
     @commands.command()
     async def startstream(self, ctx: commands.Context):
-        if ctx.author.name in tokens:
+        if ctx.author.is_mod:
              ws.call(obwsrequests.StartStreaming())
     
     # allows mods to stop stream
     @commands.command()
     async def stopstream(self, ctx: commands.Context):
-        if ctx.author.name in tokens:
+        if ctx.author.is_mod:
             ws.call(obwsrequests.StopStreaming())
     
     # allows mods to raid
     @commands.command()
     async def raid(self, ctx: commands.Context):
-        if ctx.author.name in tokens:
+        if ctx.author.is_mod:
             ctx.message.content = ctx.message.content.replace("!raid ", "")
             users = await bot.fetch_users([yourChannelName, ctx.message.content])
             print(users)
             await users[0].start_raid(accessToken, users[1].id)
-
-    # sends a message with the currently playing song
-    @commands.command()
-    async def nowplaying(self, ctx: commands.Context):
-        with open('title.txt', 'r') as f:
-            contents = f.read()
-        await ctx.cend(f"The current song playing is: {contents}")
-    # allows mods to forceskip a song
-    @commands.command()
-    async def forceskip(self, ctx: commands.Context):
-        if ctx.author.name in tokens:
-            await forceSkip()
-            ctx.reply("Successfully attempted to force skip song.")
-
-    @commands.command()
-    async def request(self, ctx: commands.Context):
-        await userAddToQueue(ctx.message.content, ctx.message.author.display_name)
-        ctx.reply("Successfully attempted to add song to queue.")
 bot = Bot()
