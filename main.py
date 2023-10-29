@@ -1,5 +1,5 @@
 import asyncio
-import traceback; from libraries.chatPlays import *; from bots import commandBot, econBot, pollBot
+import traceback; from libraries.chatPlays import *; from libraries.music import *; from bots import commandBot, econBot, pollBot
 
 # main code loop
 async def main():
@@ -16,6 +16,8 @@ async def main():
         commandBot.ws.call(obwsrequests.SetSceneItemProperties(item = "hello world", visible = True))
         await asyncio.sleep(5)
         commandBot.ws.call(obwsrequests.SetSceneItemProperties(item = "hello world", visible = False))
+        await startMusic()
+        
 
     # infinite loop to check stream statuses
     while True:
@@ -42,7 +44,7 @@ async def main():
                 except:
                     print("FUCK TWITCH")
                 
-                # display timer
+                # # display timer
                 commandBot.ws.call(obwsrequests.SetSceneItemProperties(item = "raid status", visible = True))
 
                 # update timer
