@@ -6,7 +6,7 @@ config = configparser.ConfigParser()
 config.read("files\\config.ini")
 
 # connecting to obs
-ws = obsws("localhost", 4444, config.get("obs", "websocket server password"))
+ws = obsws(config.get("obs", "ip"), config.get("obs", "port"), config.get("obs", "websocket server password"))
 ws.connect()
 
 # setting up controller
@@ -16,6 +16,8 @@ inputBotTask = None
 idleBotTask = None
 killSwitch = False
 module = None
+
+print("got here")
 
 # updates controller if config is changed
 async def controllerCheck():
