@@ -2,6 +2,8 @@
 # don't fuck with this too much unless you're familiar with twitchio and how it works
 # not much documentation here because even i don't know what the fuck this object oriented programming is doing in python
 
+# imports
+from twitchio.ext import commands
 from bots.commandBot import *
 
 # setting up variables
@@ -21,11 +23,14 @@ class Bot(commands.Bot):
         if isinstance(error, commands.CommandNotFound):
             pass
         else:
-            traceback.print_exception(type(error), error, error.__traceback__, file= sys.stderr)
+            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
     # does whenever a message is sent
     async def event_message(self, message):
-        global pollOptions, runningPoll, voters, pollName
+        global pollOptions
+        global runningPoll
+        global voters
+        global pollName
 
         # don't take bot responses as real messages
         if message.echo:
@@ -38,9 +43,9 @@ class Bot(commands.Bot):
             if message.author.name not in voters:
 
                 # checks if message is number then increases vote count for the specified option
-                for option in range(len(pollOptions)):
-                    if message.content == str(option + 1):
-                        pollOptions[option][1] += 1
+                for x in range(len(pollOptions)):
+                    if message.content == str(x + 1):
+                        pollOptions[x][1] += 1
                         voters += [message.author.name]
 
         # telling bot to do command
@@ -49,7 +54,10 @@ class Bot(commands.Bot):
     # allows a whitelisted user to start a pole
     @commands.command()
     async def startpoll(self, ctx):
-        global pollOptions, voters, pollName, runningPoll
+        global pollOptions
+        global voters
+        global pollName
+        global runningPoll
 
         # check if user can start poll and if no other polls running
         if ctx.author.name in tokens:
@@ -74,7 +82,9 @@ class Bot(commands.Bot):
     # tells about current or most recent past poll
     @commands.command()
     async def poll(self, ctx):
-        global pollOptions, runningPoll, pollName
+        global pollOptions
+        global runningPoll
+        global pollName
 
         # if ongoing poll
         if runningPoll:
@@ -82,38 +92,38 @@ class Bot(commands.Bot):
             # getting poll info
             results = ""
             total = 0
-            for option in range(len(pollOptions)):
-                total += pollOptions[option][1]
-            for option in range(len(pollOptions)):
+            for x in range(len(pollOptions)):
+                total += pollOptions[x][1]
+            for x in range(len(pollOptions)):
                 if total != 0:
-                    results += (str(option + 1) + ", " + pollOptions[option][0] + " - " + str('%.2f' % ((pollOptions[option][1] / total) * 100)) + "%, ")
+                    results += (str(x + 1) + ", " + pollOptions[x][0] + " - " + str('%.2f' % ((pollOptions[x][1] / total) * 100)) + "%, ")
                 else:
-                    results += (str(option + 1) + ", " + pollOptions[option][0] + " - " + "0%, ")
+                    results += (str(x + 1) + ", " + pollOptions[x][0] + " - " + "0%, ")
 
             # sending poll info
-            await ctx.send("[bot] " + pollName + ": " + results)
+            await ctx.send("" + pollName + ": " + results)
 
         # if no ongoing poll
         if not runningPoll:
 
             # try and get past poll results and send them if they exist
             if not pollOptions:
-                await ctx.send("[bot] no past or ongoing polls")
+                await ctx.send("No past or ongoing polls")
             else:
 
                 # getting poll results
                 results = ""
                 total = 0
-                for option in range(len(pollOptions)):
-                    total += int(pollOptions[option][1])
-                for option in range(len(pollOptions)):
+                for x in range(len(pollOptions)):
+                    total += int(pollOptions[x][1])
+                for x in range(len(pollOptions)):
                     if total != 0:
-                        results += (pollOptions[option][0] + " - " + str('%.2f' % ((pollOptions[option][1] / total) * 100)) + "%, ")
+                        results += (pollOptions[x][0] + " - " + str('%.2f' % ((pollOptions[x][1] / total) * 100)) + "%, ")
                     else:
-                        results += (pollOptions[option][0] + " - 0%, ")
+                        results += (pollOptions[x][0] + " - 0%, ")
 
                 # sending poll results
-                await ctx.send("[bot] " + "\"" + pollName + "\"" + " results: " + results)
+                await ctx.send("" + "\"" + pollName + "\"" + " results: " + results)
 
     # tells the user how to vote in poll
     @commands.command()
@@ -125,38 +135,41 @@ class Bot(commands.Bot):
 
             # getting poll results
             results = ""
-            for option in range(len(pollOptions)):
-                results += ("type \"" + str(option + 1) + "\" to vote \"" + pollOptions[option][0] + "\", ")
+            for x in range(len(pollOptions)):
+                results += ("type \"" + str(x+1) + "\" to vote \"" + pollOptions[x][0] + "\", ")
 
             # sending poll results
-            await ctx.send("[bot] " + results)
+            await ctx.send("" + results)
 
         # error handling
         else:
-            await ctx.send("[bot] no ongoing poll")
+            await ctx.send("No ongoing poll")
 
     # allows a whitelisted user to stop the poll
     @commands.command()
     async def endpoll(self, ctx):
-        global runningPoll, pollOptions, voters, pollName
+        global runningPoll
+        global pollOptions
+        global voters
+        global pollName
 
         # checks if the user is allowed to do this and if there is even a poll running
         if ctx.author.name in tokens:
             if not runningPoll:
-                await ctx.send("[bot] no ongoing polls")
+                await ctx.send("No ongoing polls")
             elif runningPoll:
 
                 # tallying final poll results
                 runningPoll = False
                 results = ""
                 total = 0
-                for option in range(len(pollOptions)):
-                    total += pollOptions[option][1]
-                for option in range(len(pollOptions)):
+                for i in range(len(pollOptions)):
+                    total += pollOptions[i][1]
+                for i in range(len(pollOptions)):
                     if total != 0:
-                        results += (pollOptions[option][0] + " - " + str('%.2f' % ((pollOptions[option][1]/total) * 100)) + "%, ")
+                        results += (pollOptions[i][0] + " - " + str('%.2f' % ((pollOptions[i][1]/total) * 100)) + "%, ")
                     else:
-                        results += (pollOptions[option][0] + " - 0%, ")
+                        results += (pollOptions[i][0] + " - 0%, ")
 
                 # sending poll results
-                await ctx.send("[bot] " + "\"" + pollName + "\"" + " results: " + results)
+                await ctx.send("" + "\"" + pollName + "\"" + " results: " + results)
