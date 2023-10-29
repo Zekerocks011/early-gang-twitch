@@ -1,3 +1,4 @@
+#imports
 import os
 import random
 import time
@@ -9,15 +10,14 @@ from moviepy.editor import *
 from googleapiclient.discovery import build
 from pytube import YouTube
 import pygame.mixer
+from files.queue import *
+import configparser
 
-# ws = obsws("localhost", 4444, "password")
-# ws.connect()
-
-# Set your API key here
-API_KEY = "AIzaSyCrKl0N_22aK7EzHkomAe65CeQNTEWrrKE"
-
-# YouTube playlist ID (extract from the playlist URL)
-PLAYLIST_ID = "PLzTxt5iYdhzifPXw_g0hWp0YgFetgazuv"
+#Sets config file and gives us playlist id and api key
+config = configparser.ConfigParser()
+config.read("files\\config.ini")
+API_KEY = config.get("youtube", "api key")
+PLAYLIST_ID = config.get("youtube", "playlist id")
 
 # Initialize the YouTube Data API client
 youtube = build('youtube', 'v3', developerKey=API_KEY)
@@ -38,9 +38,9 @@ while True:
     if nextPageToken is None:
         break
 
-queue = []
 
-def addToQueue():
+# Adds a song to the queue
+async def addToQueue():
     for attempt in range(10):
         try:
             print("trying")
@@ -64,7 +64,7 @@ def addToQueue():
             video = AudioFileClip(video_path)
             video.write_audiofile(audio_path)
             os.remove(video_path)
-            queue.append([audio_path, yt.title, yt.author, "FooBot", yt.thumbnail_url])
+            bopIt([audio_path, yt.title, yt.author, "FooBot", yt.thumbnail_url])
             #insert audio path, title, author, who requested, thumbnail link
         except:
             print("errored")
@@ -73,7 +73,8 @@ def addToQueue():
     else:
         print("max amount hit")
 
-def userAddToQueue(song, user):
+# Function to add a user selected song to the queue 
+async def userAddToQueue(song, user):
     try:
         search_response = youtube.search().list(
         q=song[10:],
@@ -101,68 +102,12 @@ def userAddToQueue(song, user):
         video = AudioFileClip(video_path)
         video.write_audiofile(audio_path)
         os.remove(video_path)
-        queue.append([audio_path, yt.title, yt.author, user, yt.thumbnail_url])
+        bopIt([audio_path, yt.title, yt.author, user, yt.thumbnail_url])
         return "The song you requested was added successfully."
     except:
         return "The song you requested was unsuccessful in adding to the queue."
 
-# Randomly select a video from the playlist
-for i in range(3):
-    for attempt in range(10):
-        try:
-            print("trying")
-            random_video = random.choice(playlist_items)
-            video_id = random_video['snippet']['resourceId']['videoId']
-            # Download the selected video
-            url = f"https://www.youtube.com/watch?v={video_id}"
-            yt = YouTube(url)
-            stream = yt.streams.get_audio_only()
-            download_path = os.getcwd()
-            name = random.randint(0,69420)
-            stream.download(output_path=download_path, filename=f"{name}.mp4")
-            time.sleep(2)
-            video_path = os.path.join(download_path, f"{name}.mp4")
-            audio_path = os.path.join(download_path, f"{name}.mp3")
-            for pathattempt in range(10):
-                if not os.path.exists(video_path):
-                    print("no existie")
-                    time.sleep(1)
-                    continue
-            video = AudioFileClip(video_path)
-            video.write_audiofile(audio_path)
-            os.remove(video_path)
-            queue.append([audio_path, yt.title, yt.author, "FooBot", yt.thumbnail_url])
-            #insert audio path, title, author, who requested, thumbnail link
-        except:
-            print("errored")
-        else:
-            break
-    else:
-        print("max amount hit")
-        break
-
-print(queue)
-
-
-print(f"Now playing: {queue[0][1]}")
-response = requests.get(queue[0][4])
-with open('image.png', 'wb') as f:
-    f.write(response.content)
-pygame.mixer.init()
-pygame.mixer.music.load(queue[0][0])
-pygame.mixer.music.play()
-
-def mutagen_length(path):
-    try:
-        audio = MP3(path)
-        length = audio.info.length
-        return length
-    except:
-        return None
-    
-
-        
-
+# Function to update the current time in OBS
 def updateCurrentTime():
     while True:
         try:
@@ -182,24 +127,69 @@ def updateCurrentTime():
             continue
 
 b = threading.Thread(name="updateCurrentTime", target=updateCurrentTime)
-b.start()
+started = False
+# Function to get called to start the music
+async def startMusic():
+    started == True
+    # Randomly select a video from the playlist
+    for i in range(3):
+        for attempt in range(10):
+            try:
+                print("trying")
+                random_video = random.choice(playlist_items)
+                video_id = random_video['snippet']['resourceId']['videoId']
+                # Download the selected video
+                url = f"https://www.youtube.com/watch?v={video_id}"
+                yt = YouTube(url)
+                stream = yt.streams.get_audio_only()
+                download_path = os.getcwd()
+                name = random.randint(0,69420)
+                stream.download(output_path=download_path, filename=f"{name}.mp4")
+                time.sleep(2)
+                video_path = os.path.join(download_path, f"{name}.mp4")
+                audio_path = os.path.join(download_path, f"{name}.mp3")
+                for pathattempt in range(10):
+                    if not os.path.exists(video_path):
+                        print("no existie")
+                        time.sleep(1)
+                        continue
+                video = AudioFileClip(video_path)
+                video.write_audiofile(audio_path)
+                os.remove(video_path)
+                bopIt([audio_path, yt.title, yt.author, "FooBot", yt.thumbnail_url])
+                #insert audio path, title, author, who requested, thumbnail link
+            except:
+                print("errored")
+            else:
+                break
+        else:
+            print("max amount hit")
+            break
 
-def forceSkip():
-    try:
-        pygame.mixer.music.unload()
-    except:
-        return "Error"
-    
+    print(queue)
 
-while True:
+
+    print(f"Now playing: {queue[0][1]}")
+    response = requests.get(queue[0][4])
+    with open('image.png', 'wb') as f:
+        f.write(response.content)
+    pygame.mixer.init()
+    pygame.mixer.music.load(queue[0][0])
+    pygame.mixer.music.play()
+    b.start()
+
+while started == True:
     while pygame.mixer.music.get_busy():
         pass
     else:
-        pygame.mixer.music.unload()
-        print("not busy")
-        os.remove(queue[0][0])
-        queue.pop(0)
-        print(queue)
+        try:
+            pygame.mixer.music.unload()
+            print("not busy")
+            os.remove(queue[0][0])
+            popIt(0)
+            print(queue)
+        except:
+            continue
         while len(queue) < 3:
             if not pygame.mixer.music.get_busy():
                 try:
@@ -226,5 +216,16 @@ while True:
                     break
             continue
 
-# Need to make a function that makes a script so it constantly keeps 3 songs in the auto queue at all times. Make a table to keep track of this data. Delete songs and
-# entry in queue afterwards
+async def mutagen_length(path):
+    try:
+        audio = MP3(path)
+        length = audio.info.length
+        return length
+    except:
+        return None
+    
+def forceSkip():
+    try:
+        pygame.mixer.music.unload()
+    except:
+        return "Error"
