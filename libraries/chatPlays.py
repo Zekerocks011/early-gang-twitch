@@ -6,7 +6,7 @@ config = configparser.ConfigParser()
 config.read("files\\config.ini")
 
 # connecting to obs
-ws = obsws(config.get("obs", "ip"), config.get("obs", "port"), config.get("obs", "websocket server password"))
+ws = obsws(config.get("obs", "ip"), int(config.get("obs", "port")), config.get("obs", "websocket server password"))
 ws.connect()
 
 # setting up controller
