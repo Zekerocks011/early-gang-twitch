@@ -2,6 +2,10 @@ import asyncio
 import warnings
 import traceback; from libraries.chatPlays import *; from bots import commandBot, econBot, pollBot
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
+import subprocess
+
+# subprocess.run(["python", "music.py"])
+#subprocess.run(["python", "zorbeez.py"])
 
 # main code loop
 async def main():
