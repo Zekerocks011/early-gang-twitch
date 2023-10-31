@@ -1,5 +1,7 @@
 import asyncio
+import warnings
 import traceback; from libraries.chatPlays import *; from bots import commandBot, econBot, pollBot
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
 # main code loop
 async def main():
@@ -13,75 +15,76 @@ async def main():
         await startChatPlays()
         await startInputBot()
         await startIdleBot()
-        commandBot.ws.call(obwsrequests.SetSceneItemProperties(item = "hello world", visible = True))
         await asyncio.sleep(5)
-        commandBot.ws.call(obwsrequests.SetSceneItemProperties(item = "hello world", visible = False))
         
 
     # infinite loop to check stream statuses
     while True:
+        try:
+            # if streamer goes live
+            if await commandBot.bot.fetch_streams(user_logins = [commandBot.streamerChannelName]) != [] and await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]) != []:
 
-        # if streamer goes live
-        if await commandBot.bot.fetch_streams(user_logins = [commandBot.streamerChannelName]) != [] and await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]) != []:
+                # shut down everything
+                if chatPlaying:
+                    await stopChatPlays()
+                if inputBotPlaying:
+                    await stopInputBot()
+                if idleBotPlaying:
+                    await stopIdleBot()
 
-            # shut down everything
-            if chatPlaying:
-                await stopChatPlays()
-            if inputBotPlaying:
-                await stopInputBot()
-            if idleBotPlaying:
-                await stopIdleBot()
+                # end stream
+                if await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]):
 
-            # end stream
-            if await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]):
+                    # start raid
+                    users = await commandBot.bot.fetch_users([commandBot.yourChannelName, commandBot.streamerChannelName])
 
-                # start raid
-                users = await commandBot.bot.fetch_users([commandBot.yourChannelName, commandBot.streamerChannelName])
+                    try:
+                        await users[0].start_raid(commandBot.accessToken, users[1].id)
+                    except:
+                        print("FUCK TWITCH")
+                    
+                    # # display timer
+                    response = ws.call(requests.GetSceneItemId(sceneName = "Main", sourceName = "raid status"))
+                    raid_Status_Id = int(response.datain['sceneItemId'])
+                    commandBot.ws.call(requests.SetSceneItemEnabled(sceneName = "Main", sceneItemId = raid_Status_Id, sceneItemEnabled = True))
 
-                try:
-                    await users[0].start_raid(commandBot.accessToken, users[1].id)
-                except:
-                    print("FUCK TWITCH")
-                
-                # # display timer
-                commandBot.ws.call(obwsrequests.SetSceneItemProperties(item = "raid status", visible = True))
+                    # update timer
+                    clock = [1, 30]
+                    while clock != [0, 0]:
+                        if clock[1] < 10:
+                            ws.call(requests.SetInputSettings(inputName = "raid status", inputSettings = {"text": "RAID INCOMING\n" + str(clock[0]) + ":0" + str(clock[1])}))
+                        else:
+                            ws.call(requests.SetInputSettings(inputName = "raid status", inputSettings = {"text": "RAID INCOMING\n" + str(clock[0]) + ":" + str(clock[1])}))
 
-                # update timer
-                clock = [1, 30]
-                while clock != [0, 0]:
-                    if clock[1] < 10:
-                        ws.call(obwsrequests.SetTextGDIPlusProperties(source = "raid status", text = ("RAID INCOMING\n" + str(clock[0]) + ":0" + str(clock[1]))))
-                    else:
-                        ws.call(obwsrequests.SetTextGDIPlusProperties(source = "raid status", text = ("RAID INCOMING\n" + str(clock[0]) + ":" + str(clock[1]))))
+                        if clock[1] == 0:
+                            clock[1] = 59
+                            clock[0] -= 1
+                        else:
+                            clock[1] -= 1
+                        await asyncio.sleep(1)
 
-                    if clock[1] == 0:
-                        clock[1] = 59
-                        clock[0] -= 1
-                    else:
-                        clock[1] -= 1
-                    await asyncio.sleep(1)
+                    # stop raid and hide timer
+                    commandBot.ws.call(requests.StopStream())
+                    commandBot.ws.call(requests.SetSceneItemEnabled(sceneName = "Main", sceneItemId = 2, sceneItemEnabled = True))
 
-                # stop raid and hide timer
-                commandBot.ws.call(obwsrequests.StopStreaming())
-                commandBot.ws.call(obwsrequests.SetSceneItemProperties(item = "raid status", visible = False))
+            # if streamer goes offline
+            elif await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]) == [] and await commandBot.bot.fetch_streams(user_logins = [commandBot.streamerChannelName]) == []:
 
-        # if streamer goes offline
-        elif await commandBot.bot.fetch_streams(user_logins = [commandBot.yourChannelName]) == [] and await commandBot.bot.fetch_streams(user_logins = [commandBot.streamerChannelName]) == []:
+                # start stream
+                if not await commandBot.bot.fetch_streams(user_logins=[commandBot.yourChannelName]):
+                    commandBot.ws.call(requests.StartStream())
+                    await asyncio.sleep(5)
+                if not chatPlaying:
+                    await startChatPlays()
+                if not inputBotPlaying:
+                    await startInputBot()
+                if not idleBotPlaying:
+                    await startIdleBot()
 
-            # start stream
-            if not await commandBot.bot.fetch_streams(user_logins=[commandBot.yourChannelName]):
-                commandBot.ws.call(obwsrequests.StartStreaming())
-                commandBot.ws.call(obwsrequests.SetSceneItemProperties(item="hello world", visible=True))
-                await asyncio.sleep(5)
-                commandBot.ws.call(obwsrequests.SetSceneItemProperties(item="hello world", visible=False))
-            if not chatPlaying:
-                await startChatPlays()
-            if not inputBotPlaying:
-                await startInputBot()
-            if not idleBotPlaying:
-                await startIdleBot()
-
-        await asyncio.sleep(3)
+            await asyncio.sleep(3)
+        except:
+            print("timed out, trying again")
+            continue
 
 # running command bot for inputs
 async def setup():
