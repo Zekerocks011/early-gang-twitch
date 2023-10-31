@@ -2,7 +2,7 @@
 # don't fuck with this too much unless you're familiar with twitchio and how it works
 # not much documentation here because even i don't know what the fuck this object oriented programming is doing in python
 
-import aiohttp, time, traceback, random, base64, os, sys, json; from urllib.parse import urlencode; from twitchio.ext import commands; from libraries.chatPlays import *; from obswebsocket import obsws, requests;
+import aiohttp, time, traceback, random, base64, os, sys, json, threading; from urllib.parse import urlencode; from twitchio.ext import commands; from libraries.chatPlays import *; from obswebsocket import obsws, requests;
 
 # setting directory if file is ran correctly
 directory = ""
@@ -71,6 +71,7 @@ for i in mouseKey.split("."):
             token += char
     tokens += [token]
 
+
 class Bot(commands.Bot):
     
 
@@ -87,6 +88,7 @@ class Bot(commands.Bot):
 
     # when someone sends a message in chat
     async def event_message(self, message):
+        random.randint 
         global chatters, chatPlays
 
         # don't take bot messages as real messages
@@ -138,7 +140,6 @@ class Bot(commands.Bot):
                 except:
                     await asyncio.sleep(5)
             modIds = [mod.get("user_id") for mod in mod_data.get("data")]
-            print(modIds)
 
             # timing out
             try:
@@ -197,17 +198,17 @@ class Bot(commands.Bot):
     # sends a list of sll the different input bots
     @commands.command()
     async def snackfamily(self, ctx: commands.Context):
-        await ctx.send("These are all the different types of input bots: sleepy, chris, burst, silly, cautious, sonic")
+        await ctx.send("These are all the different types of input bots. You can switch them with the command !swapsnack. Bots: sleepy, chris, burst, silly, cautious, sonic")
 
     # sends link to discord
     @commands.command()
     async def discord(self, ctx: commands.Context):
-        print("got here")
         await ctx.send("Come join the community in our discord server! Link: https://discord.gg/cnrvMKfacy")
 
     # sends link to stream music playlist
     @commands.command()
     async def playlist(self, ctx: commands.Context):
+        print(self.connected_channels)
         await ctx.send("This is the link to the stream music playlist: https://www.youtube.com/playlist?list=PLzTxt5iYdhzifPXw_g0hWp0YgFetgazuv")
 
     # allows mods to start stream
@@ -237,7 +238,6 @@ class Bot(commands.Bot):
             global victimId
             try:
                 async with aiohttp.ClientSession(headers = {"Client-ID": streamerClientID, "Authorization": "Bearer " + steramerAccessToken}) as session:
-                    print("https://api.twitch.tv/helix/users?login="+victim)
                     async with session.get("https://api.twitch.tv/helix/users?login="+victim) as response:
                         theJsonTM = await response.json()
                         victimId = theJsonTM['data'][0]['id']
@@ -259,7 +259,6 @@ class Bot(commands.Bot):
     async def unmod(self, ctx: commands.Context):
         if ctx.message.author.name == "zekerocks011":
             victim = ctx.message.content[7:]
-            print(victim)
             global victimId
             try:
                 async with aiohttp.ClientSession(headers = {"Client-ID": streamerClientID, "Authorization": "Bearer " + steramerAccessToken}) as session:
@@ -291,5 +290,6 @@ class Bot(commands.Bot):
                     await ctx.reply("I have successfully changed the stream title.")
             except:
                 await ctx.reply("The request to change the stream title has failed.")
+
 
 bot = Bot()
