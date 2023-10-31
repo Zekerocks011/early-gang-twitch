@@ -16,6 +16,7 @@ from libraries.chatPlays import *
 from bots import commandBot
 from libraries import chatPlays
 import os
+from obswebsocket import obsws, requests;
 
 # setting up variables
 chatters = []
@@ -25,6 +26,8 @@ activeCodes = []
 trialOngoing = False
 voters = []
 verdict = []
+ws = obsws(config.get("obs", "ip"), int(config.get("obs", "port")), config.get("obs", "websocket server password"))
+ws.connect()
 
 class Bot(commands.Bot):
 
@@ -619,10 +622,29 @@ class Bot(commands.Bot):
                     await db.execute("UPDATE economy SET points=? WHERE id=?", ((result[2] - 150), ctx.author.id))
                     await db.commit()
 
-                commandBot.chatPlays.currentSnack = snacks[random.randint(0, len(snacks) - 1)]
+                chatPlays.currentSnack = snacks[random.randint(0, len(snacks) - 1)]
                 await ctx.reply("" + chatPlays.currentSnack + " snack was swapped in")
                 if not chatPlays.idleBotStatus:
                     await updateSnatus()
+
+    @commands.command()
+    async def zorbin(self, ctx: commands.Context):
+        try:
+            async with aiosqlite.connect(os.path.abspath(os.path.join(commandBot.directory, "chatData.db"))) as db:
+                async with db.execute("SELECT * FROM economy WHERE id=?", (ctx.author.id,)) as cursor:
+                    result = await cursor.fetchone()
+
+                # check if the user has enough money
+                if result[2] < 15000 and ctx.author.name not in commandBot.tokens:
+                    await ctx.reply("Not enough basement pesos")
+                else:
+                    if ctx.author.name not in commandBot.tokens:
+                        await db.execute("UPDATE economy SET points=? WHERE id=?", ((result[2] - 15000), ctx.author.id))
+                        await db.commit()
+                        ws.call(requests.SetCurrentProgramScene(sceneName="zorbeez"))
+                        ctx.reply("ZORBIN")
+        except:
+            ctx.reply("No zorbin D:")
     
     # creates a poll and lets chatters vote on who's guilty
     @commands.command()
