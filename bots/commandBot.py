@@ -2,7 +2,7 @@
 # don't fuck with this too much unless you're familiar with twitchio and how it works
 # not much documentation here because even i don't know what the fuck this object oriented programming is doing in python
 
-import aiohttp, time, traceback, random, base64, requests, os, sys; from urllib.parse import urlencode; from twitchio.ext import commands; from libraries.chatPlays import *
+import aiohttp, time, traceback, random, base64, os, sys, json; from urllib.parse import urlencode; from twitchio.ext import commands; from libraries.chatPlays import *; from obswebsocket import obsws, requests;
 
 # setting directory if file is ran correctly
 directory = ""
@@ -42,15 +42,15 @@ else:
 # reading config
 config = configparser.ConfigParser()
 config.read(os.path.abspath((os.path.join(directory, "config.ini"))))
+streamerClientID = config.get("twitch", "your client id")
+steramerAccessToken = config.get("twitch", "your access token")
 clientID = config.get("twitch", "bot client id")
 accessToken = config.get("twitch", "bot access token")
 streamerChannelName = config.get("twitch", "streamer to raid channel name")
 yourChannelName = config.get("twitch", "your channel name")
 
 # setting up variables
-print("got here")
 ws = obsws(config.get("obs", "ip"), int(config.get("obs", "port")), config.get("obs", "websocket server password"))
-print("got here")
 whiteListers = ["dougdoug", "parkzer", "GalarianGuy", "Zekerocks011", "dd_ghost1", "fratriarch"]
 chatters = []
 blockedTerms = ["deez nuts", "deez nuts gottem", "D:\\ eez nuts"]
@@ -72,6 +72,7 @@ for i in mouseKey.split("."):
     tokens += [token]
 
 class Bot(commands.Bot):
+    
 
     # sets up bot and connects to twitch
     def __init__(self):
@@ -106,11 +107,11 @@ class Bot(commands.Bot):
                     connected = False
                     while not connected:
                         try:
-                            async with aiohttp.ClientSession(headers = {"Client-ID": clientID, "Authorization": "Bearer " + accessToken}) as session:
+                            async with aiohttp.ClientSession(headers = {"Client-ID": streamerClientID, "Authorization": "Bearer " + streamerClientID}) as session:
                                 async with session.get("https://api.twitch.tv/helix/users") as response:
                                     rateLimit = response.headers.get("Ratelimit-Remaining")
                                     if rateLimit != "0":
-                                        await session.post("https://api.twitch.tv/helix/moderation/moderators?broadcaster_id=" + str(user[0].id) + "&user_id=" + id)
+                                        await session.post("https://api.twitch.tv/helix/moderation/moderators?broadcaster_id=" + str(user[0].id) + "&user_id=" + id, headers = {"Client-ID": streamerClientID, "Authorization": "Bearer " + streamerClientID})
                                         async with session.get("https://api.twitch.tv/helix/moderation/moderators?broadcaster_id=" + str(user[0].id)) as response:
                                             modIds = []
                                             for mod in (await response.json()).get("data"):
@@ -126,10 +127,10 @@ class Bot(commands.Bot):
             while not connected:
                 try:
                     async with aiohttp.ClientSession() as session:
-                        async with session.get("https://api.twitch.tv/helix/users", headers = {"Client-ID": clientID, "Authorization": "Bearer " + accessToken}) as response:
+                        async with session.get("https://api.twitch.tv/helix/users", headers = {"Client-ID": streamerClientID, "Authorization": "Bearer " + steramerAccessToken}) as response:
                             rateLimit = response.headers.get("Ratelimit-Remaining")
                             if rateLimit != "0":
-                                async with session.get("https://api.twitch.tv/helix/moderation/moderators?broadcaster_id=" + str(user[0].id), headers={"Authorization": "Bearer " + accessToken, "Client-Id": clientID}) as response:
+                                async with session.get("https://api.twitch.tv/helix/moderation/moderators?broadcaster_id=" + str(user[0].id), headers = {"Authorization": "Bearer " + steramerAccessToken, "Client-Id": streamerClientID}) as response:
                                     mod_data = await response.json()
                                     connected = True
                             else:
@@ -137,10 +138,11 @@ class Bot(commands.Bot):
                 except:
                     await asyncio.sleep(5)
             modIds = [mod.get("user_id") for mod in mod_data.get("data")]
+            print(modIds)
 
             # timing out
             try:
-                await user[0].timeout_user(accessToken, user[0].id, message.author.id, duration, "GOTTEM")
+                await user[0].timeout_user(steramerAccessToken, user[0].id, message.author.id, duration, "GOTTEM")
             except:
                 pass
 
@@ -169,6 +171,7 @@ class Bot(commands.Bot):
     @commands.command()
     async def what(self, ctx: commands.Context):
         global config
+        ctx.channel.user
         config.read(os.path.abspath((os.path.join(directory, "config.ini"))))
         await ctx.send("[bot] " + config.get("command bot", "!what"))
 
@@ -211,13 +214,13 @@ class Bot(commands.Bot):
     @commands.command()
     async def startstream(self, ctx: commands.Context):
         if ctx.author.is_mod:
-             ws.call(obwsrequests.StartStreaming())
+             ws.call(requests.StartStream())
     
     # allows mods to stop stream
     @commands.command()
     async def stopstream(self, ctx: commands.Context):
         if ctx.author.is_mod:
-            ws.call(obwsrequests.StopStreaming())
+            ws.call(requests.StopStream())
     
     # allows mods to raid
     @commands.command()
@@ -225,6 +228,68 @@ class Bot(commands.Bot):
         if ctx.author.is_mod:
             ctx.message.content = ctx.message.content.replace("!raid ", "")
             users = await bot.fetch_users([yourChannelName, ctx.message.content])
-            print(users)
             await users[0].start_raid(accessToken, users[1].id)
+    
+    @commands.command()
+    async def mod(self, ctx: commands.Context):
+        if ctx.message.author.name == "zekerocks011":
+            victim = ctx.message.content[5:]
+            global victimId
+            try:
+                async with aiohttp.ClientSession(headers = {"Client-ID": streamerClientID, "Authorization": "Bearer " + steramerAccessToken}) as session:
+                    print("https://api.twitch.tv/helix/users?login="+victim)
+                    async with session.get("https://api.twitch.tv/helix/users?login="+victim) as response:
+                        theJsonTM = await response.json()
+                        victimId = theJsonTM['data'][0]['id']
+            except:
+                await ctx.reply("Zeke, I could not mod this user. I am sorry I have failed you.")
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get("https://api.twitch.tv/helix/users", headers = {"Client-ID": streamerClientID, "Authorization": "Bearer " + steramerAccessToken}) as response:
+                        rateLimit = response.headers.get("Ratelimit-Remaining")
+                        if rateLimit != "0":
+                            await session.post("https://api.twitch.tv/helix/moderation/moderators?broadcaster_id=" + str("945207948") + "&user_id=" + str(victimId), headers = {"Client-ID": streamerClientID, "Authorization": "Bearer " + steramerAccessToken})
+                            await ctx.reply("I have successfully added the user \""+victim+"\" to the moderation team, Zeke.")
+                        else:
+                            await asyncio.sleep(5)
+            except:
+                await ctx.reply("Zeke, I could not mod this user. I am sorry I have failed you.")
+
+    @commands.command()
+    async def unmod(self, ctx: commands.Context):
+        if ctx.message.author.name == "zekerocks011":
+            victim = ctx.message.content[7:]
+            print(victim)
+            global victimId
+            try:
+                async with aiohttp.ClientSession(headers = {"Client-ID": streamerClientID, "Authorization": "Bearer " + steramerAccessToken}) as session:
+                    async with session.get("https://api.twitch.tv/helix/users?login="+victim) as response:
+                        theJsonTM = await response.json()
+                        victimId = theJsonTM['data'][0]['id']
+            except:
+                await ctx.reply("Zeke, I could not unmod this user. I am sorry I have failed you.")
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get("https://api.twitch.tv/helix/users", headers = {"Client-ID": streamerClientID, "Authorization": "Bearer " + steramerAccessToken}) as response:
+                        rateLimit = response.headers.get("Ratelimit-Remaining")
+                        if rateLimit != "0":
+                            await session.delete("https://api.twitch.tv/helix/moderation/moderators?broadcaster_id=" + str("945207948") + "&user_id=" + str(victimId), headers = {"Client-ID": streamerClientID, "Authorization": "Bearer " + steramerAccessToken})
+                            await ctx.reply("I have successfully removed the user \""+victim+"\" from the moderation team, Zeke.")
+                        else:
+                            await asyncio.sleep(5)
+            except:
+                await ctx.reply("Zeke, I could not unmod this user. I am sorry I have failed you.")
+
+    @commands.command()
+    async def title(self, ctx: commands.Context):
+        if ctx.message.author.is_mod:
+            content = ctx.message.content[7:]
+            try:
+                async with aiohttp.ClientSession(headers = {"Client-ID": streamerClientID, "Authorization": "Bearer " + steramerAccessToken, "Content-Type": "application/json"}) as session:
+                    data = json.dumps({"title": content})
+                    await session.patch("https://api.twitch.tv/helix/channels?broadcaster_id=945207948", data=data)
+                    await ctx.reply("I have successfully changed the stream title.")
+            except:
+                await ctx.reply("The request to change the stream title has failed.")
+
 bot = Bot()
