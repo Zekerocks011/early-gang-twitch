@@ -17,6 +17,7 @@ from bots import commandBot
 from libraries import chatPlays
 import os
 from obswebsocket import obsws, requests;
+import threading
 
 # setting up variables
 chatters = []
@@ -291,7 +292,7 @@ class Bot(commands.Bot):
     async def bptax(self, ctx: commands.Context):
 
         # checks if the chatter can do this
-        if ctx.author.name in commandBot.tokens:
+        if ctx.author.is_mod:
             # error handling
             if ctx.message.content == "!bptax" or ctx.message.content == "!bptax ":
                 await ctx.reply("Please include the user and amount your command messages formatted like !bpTax user, 100")
@@ -315,6 +316,37 @@ class Bot(commands.Bot):
                         # if user in database
                         if result:
                             await db.execute("UPDATE economy SET points=? WHERE id=?", (result[2] - int(ctx.message.content[1]), users[0].id))
+                            await db.commit()
+                            await ctx.reply("Took from " + ctx.message.content[0] + " " + ctx.message.content[1] + " basement pesos")
+
+    @commands.command()
+    async def bppayout(self, ctx: commands.Context):
+
+        # checks if the chatter can do this
+        if ctx.author.is_mod:
+            # error handling
+            if ctx.message.content == "!bppayout" or ctx.message.content == "!bppayout ":
+                await ctx.reply("Please include the user and amount your command messages formatted like !bppayout user, 100")
+
+            # finding and updating the appropriate points
+            else:
+                ctx.message.content = ctx.message.content.replace("!bppayout ", "")
+                ctx.message.content = ctx.message.content.split()
+                users = await commandBot.bot.fetch_users([ctx.message.content[0]])
+
+                # no negative numbers
+                if int(ctx.message.content[1]) < 0:
+                    await ctx.reply("Nice try")
+
+                # seeing if user exists
+                elif users[0].id:
+                    async with aiosqlite.connect(os.path.abspath(os.path.join(commandBot.directory, "chatData.db"))) as db:
+                        async with db.execute("SELECT * FROM economy WHERE id=?", (users[0].id,)) as cursor:
+                            result = await cursor.fetchone()
+
+                        # if user in database
+                        if result:
+                            await db.execute("UPDATE economy SET points=? WHERE id=?", (result[2] + int(ctx.message.content[1]), users[0].id))
                             await db.commit()
                             await ctx.reply("Took from " + ctx.message.content[0] + " " + ctx.message.content[1] + " basement pesos")
 
@@ -642,7 +674,7 @@ class Bot(commands.Bot):
                         await db.execute("UPDATE economy SET points=? WHERE id=?", ((result[2] - 15000), ctx.author.id))
                         await db.commit()
                         ws.call(requests.SetCurrentProgramScene(sceneName="zorbeez"))
-                        ctx.reply("ZORBIN")
+                        await ctx.reply("ZORBIN")
         except:
             ctx.reply("No zorbin D:")
     
