@@ -1,7 +1,7 @@
 # functions for letting chat press keys based on their messages
 # the arrow keys didn't seem to work on my pc so use LEFT, RIGHT, UP, and DOWN at your own risk ig
 
-import ctypes, pynput, configparser, asyncio, keyboard, importlib; from obswebsocket import obsws; from obswebsocket import requests as obwsrequests
+import ctypes, pynput, configparser, asyncio, keyboard, importlib; from obswebsocket import obsws, requests
 config = configparser.ConfigParser()
 config.read("files\\config.ini")
 
@@ -34,9 +34,13 @@ async def controllerCheck():
 		if keyboard.is_pressed(config.get("command bot", "controls toggle key").lower()):
 			killSwitch = not killSwitch
 			if killSwitch:
-				ws.call(obwsrequests.SetSceneItemProperties(item = "kill switch status", visible = True))
+				response = ws.call(requests.GetSceneItemId(sceneName = "Main", sourceName = "kill switch status"))
+				theId = int(response.datain['sceneItemId'])
+				ws.call(requests.SetSceneItemEnabled(sceneName = "Main", sceneItemId = theId, sceneItemEnabled = True))
 			elif not killSwitch:
-				ws.call(obwsrequests.SetSceneItemProperties(item = "kill switch status", visible = False))
+				response = ws.call(requests.GetSceneItemId(sceneName = "Main", sourceName = "kill switch status"))
+				theId = int(response.datain['sceneItemId'])
+				ws.call(requests.SetSceneItemEnabled(sceneName = "Main", sceneItemId = theId, sceneItemEnabled = False))
 
 		# check if it's a valid controller
 		if newController in controllerNames:
@@ -140,10 +144,10 @@ async def stopChatPlays():
 # updates snack status text in obs
 async def updateSnatus():
 	if idleBotStatus:
-		ws.call(obwsrequests.SetTextGDIPlusProperties(source = "snack status", text = "idle bot is active"))
+		ws.call(requests.SetInputSettings(inputName = "snack status", inputSettings = {"text": "idle bot is active"}))
 	elif snackShot and not snackHealed:
-		ws.call(obwsrequests.SetTextGDIPlusProperties(source = "snack status", text = (currentSnack + " snack is dead")))
+		ws.call(requests.SetInputSettings(inputName = "snack status", inputSettings = {"text": currentSnack+" snack is dead"}))
 	else:
-		ws.call(obwsrequests.SetTextGDIPlusProperties(source = "snack status", text = (currentSnack + " snack is alive")))
+		ws.call(requests.SetInputSettings(inputName = "snack status", inputSettings = {"text": currentSnack+" snack is alive"}))
 
 asyncio.gather(controllerCheck())
