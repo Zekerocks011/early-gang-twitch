@@ -309,92 +309,178 @@ async def controller(message):
         elif "stop" in message:
             await stop()
 
-async def a():
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("L"), .2)
-
-async def holdA():
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("L"), 5)
-
-async def mashA():
-    mashTime = 0
-    while mashTime <= 5:
+if chatPlays.mode == "keyboard":
+    async def a():
         await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("L"), .2)
-        mashTime += .2 + .3
-        await asyncio.sleep(.3)
 
-async def b():
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("K"), .2)
+    async def holdA():
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("L"), 5)
 
-async def holdB():
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("K"), 5)
+    async def mashA():
+        mashTime = 0
+        while mashTime <= 5:
+            await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("L"), .2)
+            mashTime += .2 + .3
+            await asyncio.sleep(.3)
 
-async def mashB():
-    mashTime = 0
-    while mashTime <= 5:
+    async def b():
         await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("K"), .2)
-        mashTime += .2 + .3
-        await asyncio.sleep(.3)
 
-async def select():
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("P"), .2)
+    async def holdB():
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("K"), 5)
 
-async def start():
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("U"), .2)
+    async def mashB():
+        mashTime = 0
+        while mashTime <= 5:
+            await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("K"), .2)
+            mashTime += .2 + .3
+            await asyncio.sleep(.3)
 
-async def holdUp():
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("D"))
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), 5)
+    async def select():
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("P"), .2)
 
-async def holdDown():
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("W"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("D"))
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), 5)
+    async def start():
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("U"), .2)
 
-async def holdLeft():
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("D"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("W"))
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), 5)
+    async def holdUp():
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("D"))
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), 5)
 
-async def holdRight():
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("W"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), 5)
+    async def holdDown():
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("W"))
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("D"))
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), 5)
 
-async def slightUp():
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), .002)
+    async def holdLeft():
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("D"))
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("W"))
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), 5)
 
-async def slightDown():
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), .002)
+    async def holdRight():
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("W"))
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), 5)
 
-async def slightLeft():
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), .002)
+    async def slightUp():
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), .002)
 
-async def slightRight():
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), .002)
+    async def slightDown():
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), .002)
 
-async def up():
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), .2)
+    async def slightLeft():
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), .002)
 
-async def down():
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), .2)
+    async def slightRight():
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), .002)
 
-async def left():
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), .2)
+    async def up():
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("W"), .2)
 
-async def right():
-    await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), .2)
+    async def down():
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("S"), .2)
 
-async def stop():
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("K"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("L"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("U"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("P"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("W"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
-    await chatPlays.releaseKey(chatPlays.keyCodes.get("D"))
+    async def left():
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("A"), .2)
+
+    async def right():
+        await chatPlays.holdAndReleaseKey(chatPlays.keyCodes.get("D"), .2)
+
+    async def stop():
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("K"))
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("L"))
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("U"))
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("P"))
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("W"))
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("A"))
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("S"))
+        await chatPlays.releaseKey(chatPlays.keyCodes.get("D"))
+
+if chatPlays.mode == "controller":
+    async def a():
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("a"), .2)
+    async def holdA():
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("a"), 5)
+    async def mashA():
+        mashTime = 0
+        while mashTime <= 5:
+            await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("a"), .2)
+            mashTime += .2 + .3
+            await asyncio.sleep(.3)
+    async def b():
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("b"), .2)
+    async def holdB():
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("b"), 5)
+    async def mashB():
+        mashTime = 0
+        while mashTime <= 5:
+            await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("b"), .2)
+            mashTime += .2 + .3
+            await asyncio.sleep(.3)
+    async def select():
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("select"), .2)
+
+    async def start():
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("start"), .2)
+
+    async def holdUp():
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("down"))
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("left"))
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("right"))
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("up"), 5)
+
+    async def holdDown():
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("up"))
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("left"))
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("right"))
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("down"), 5)
+
+    async def holdLeft():
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("up"))
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("down"))
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("right"))
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("left"), 5)
+
+    async def holdRight():
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("up"))
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("down"))
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("left"))
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("right"), 5)
+
+    async def slightUp():
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("up"), .002)
+
+    async def slightDown():
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("down"), .002)
+
+    async def slightLeft():
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("left"), .002)
+
+    async def slightRight():
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("right"), .002)
+
+    async def up():
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("up"), .2)
+
+    async def down():
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("down"), .2)
+
+    async def left():
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("left"), .2)
+
+    async def right():
+        await chatPlays.holdAndReleaseKey(chatPlays.controllerCodes.get("right"), .2)
+        
+    async def stop():
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("up"))
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("down"))
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("left"))
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("right"))
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("a"))
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("b"))
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("start"))
+        await chatPlays.releaseKey(chatPlays.controllerCodes.get("select"))
