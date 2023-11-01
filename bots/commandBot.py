@@ -233,7 +233,7 @@ class Bot(commands.Bot):
     
     @commands.command()
     async def mod(self, ctx: commands.Context):
-        if ctx.message.author.name == "zekerocks011":
+        if ctx.message.author.name == "zekerocks011" or ctx.message.author.name == "GalarianGuy":
             victim = ctx.message.content[5:]
             global victimId
             try:
@@ -257,7 +257,7 @@ class Bot(commands.Bot):
 
     @commands.command()
     async def unmod(self, ctx: commands.Context):
-        if ctx.message.author.name == "zekerocks011":
+        if ctx.message.author.name == "zekerocks011" or ctx.message.author.name == "GalarianGuy":
             victim = ctx.message.content[7:]
             global victimId
             try:
