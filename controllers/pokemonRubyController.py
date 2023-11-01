@@ -17,18 +17,14 @@ async def idleBot():
             await asyncio.sleep(random.randint(1, 10) / 10)
 
             # 25% chance of non directionals
-            dice = random.randint(1, 4)
+            dice = random.randint(1, 2)
             if dice == 1:
-                dice = random.randint(1, 4)
+                dice = random.randint(1, 2)
                 match dice:
                     case 1:
                         await a()
                     case 2:
                         await b()
-                    case 3:
-                        await select()
-                    case 4:
-                        await start()
 
             # 75% chance of directionals
             else:
